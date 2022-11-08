@@ -1,7 +1,7 @@
 /**
  * 关于本站
  */
-export const aboutThis = [
+export const about = [
     {
         text: "个人经历",
         icon: "zuozhe",
