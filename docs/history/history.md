@@ -6,8 +6,6 @@ icon: time
 
 **版本发布历史**
 
-<a href="https://notejf.github.io/" target="_blank">🚀🚀在线预览🚀🚀</a>
-
 
 ## [2.2.5]() (2022-10-30)
 
