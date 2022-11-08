@@ -96,9 +96,9 @@ export default hopeTheme({
             // Giscus配置地址：https://giscus.app/zh-CN
             provider: "Giscus",  //Giscus、Waline
             repo: "topsjf/giscus-discussions",
-            repoId: "R_kgDOIU9SKA",
+            repoId: "R_kgDOIZQJAg",
             category: "Announcements",
-            categoryId: "DIC_kwDOIU9SKM4CSP2z",
+            categoryId: "DIC_kwDOIZQJAs4CSb_Z",
         },
 
     },
