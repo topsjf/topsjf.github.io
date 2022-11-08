@@ -1,5 +1,5 @@
 export * from "./allSources";
-export * from "./about-the-author";
+export * from "./about";
 export * from "./books";
 export * from "./architectures";
 export * from "./open-source";
