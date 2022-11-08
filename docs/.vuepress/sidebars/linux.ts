@@ -18,6 +18,7 @@ export const linuxJson =
                 children: linuxBasis,
             },
             "command-examples",
+            "exception-analysis",
             "network",
             "yum-repo",
             "update-kernel",
