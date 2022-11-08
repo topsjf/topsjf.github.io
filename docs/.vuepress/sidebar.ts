@@ -2,7 +2,7 @@
 import {sidebar} from "vuepress-theme-hope";
 import {
     allSources,
-    aboutThis,
+    about,
     architectures,
     books,
     databaseJson,
@@ -21,7 +21,7 @@ import {
  */
 export const sidebarConfig = sidebar({
     "/history/": ["history"],
-    "/about/": aboutThis,
+    "/about/": about,
     "/architecture/": architectures,
     "/books/": books,
     "/open-source/": openSources,
