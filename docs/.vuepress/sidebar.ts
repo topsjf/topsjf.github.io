@@ -21,8 +21,7 @@ import {
  */
 export const sidebarConfig = sidebar({
     "/history/": ["history"],
-    // @ts-ignore
-    "/about-the-author/": aboutTheAuthor,
+    "/about/": aboutThis,
     "/architecture/": architectures,
     "/books/": books,
     "/open-source/": openSources,
