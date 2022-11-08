@@ -1,4 +1,3 @@
-// @ts-ignore
 import {hopeTheme} from "vuepress-theme-hope";
 import {navbarConfig} from "./navbar";
 import {sidebarConfig} from "./sidebar";
@@ -7,7 +6,7 @@ export default hopeTheme({
     logo: "/logo.png",
     hostname: "https://topsjf.github.io/",
     author: {
-        name: "notejf",
+        name: "topsjf",
         // 根据自己的域名设置
         url: "/article",
     },
