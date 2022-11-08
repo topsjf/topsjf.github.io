@@ -1,0 +1,45 @@
+name: Deploy Docs stable
+
+on:
+  push:
+    tags:
+      - v2.**
+    paths-ignore:
+      
+jobs:
+  deploy-gh-pages:
+    name: Deploy stable Docs to page-stable
+    runs-on: ubuntu-latest
+    steps:
+      - name: 签出源码
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: true
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+
+      - name: 查看版本&下载依赖
+        run: node -v && pnpm -v && pnpm install
+
+      - name: 打包
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+        run: pnpm run docs:build
+
+      - name: 部署
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: page-stable
+          folder: dist
+          token: ${{ secrets.ACCESS_TOKEN }}
+          single-commit: true

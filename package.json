@@ -1,0 +1,29 @@
+{
+  "name": "topsjf",
+  "version": "2.2.5",
+  "private": "true",
+  "description": "MY.笔记",
+  "license": "MIT",
+  "author": {
+    "name": "topsjf",
+    "url": "https://github.com/topsjf/topsjf.github.io",
+    "email": "iskong9@163.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/topsjf/topsjf.github.io.git"
+  },
+  "scripts": {
+    "docs:build": "vuepress-vite build docs",
+    "docs:dev": "vuepress-vite dev docs",
+    "docs:c": "vuepress-vite dev docs --clean-cache"
+  },
+  "devDependencies": {
+    "@vuepress/plugin-search": "2.0.0-beta.49",
+    "@vuepress/client": "2.0.0-beta.49",
+    "vue": "3.2.41",
+    "vuepress": "2.0.0-beta.49",
+    "vuepress-vite": "2.0.0-beta.49",
+    "vuepress-theme-hope": "2.0.0-beta.91"
+  }
+}
