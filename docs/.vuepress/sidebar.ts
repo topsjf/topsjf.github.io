@@ -2,7 +2,7 @@
 import {sidebar} from "vuepress-theme-hope";
 import {
     allSources,
-    aboutTheAuthor,
+    aboutThis,
     architectures,
     books,
     databaseJson,
