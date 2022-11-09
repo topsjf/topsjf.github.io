@@ -16,50 +16,50 @@ tag:
 
 
 
-- 1、查看有多少个IP访问：
+## 1、查看有多少个IP访问：
 
 ```
 awk '{print $1}' log_file|sort|uniq|wc -l
 ```
 
-- 2、查看某一个页面被访问的次数：
+## 2、查看某一个页面被访问的次数：
 
 ```
 grep "/index.php" log_file | wc -l
 ```
 
-- 3、查看每一个IP访问了多少个页面：
+## 3、查看每一个IP访问了多少个页面：
 
 ```
 awk '{++S[$1]} END {for (a in S) print a,S[a]}' log_file > log.txt
 sort -n -t ' ' -k 2 log.txt 配合sort进一步排序
 ```
 
-- 4、将每个IP访问的页面数进行从小到大排序：
+## 4、将每个IP访问的页面数进行从小到大排序：
 
 ```
 awk '{++S[$1]} END {for (a in S) print S[a],a}' log_file | sort -n
 ```
 
-- 5、查看某一个IP访问了哪些页面：
+## 5、查看某一个IP访问了哪些页面：
 
 ```
 grep ^111.111.111.111 log_file| awk '{print $1,$7}'
 ```
 
-- 6、去掉搜索引擎统计的页面：
+## 6、去掉搜索引擎统计的页面：
 
 ```
 awk '{print $12,$1}' log_file | grep ^\"Mozilla | awk '{print $2}' |sort | uniq | wc -l
 ```
 
-- 7、查看2015年8月16日14时这一个小时内有多少IP访问:
+## 7、查看2015年8月16日14时这一个小时内有多少IP访问:
 
 ```
 awk '{print $4,$1}' log_file | grep 16/Aug/2015:14 | awk '{print $2}'| sort | uniq | wc -l
 ```
 
-- 8、查看访问前十个ip地址
+## 8、查看访问前十个ip地址
 
 ```
 awk '{print $1}' |sort|uniq -c|sort -nr |head -10 access_log
@@ -75,7 +75,7 @@ cat access.log|awk '{print $1}'|sort|uniq -c|sort -nr|head -10
 cat access.log|awk '{counts[$(11)]+=1}; END {for(url in counts) print counts[url], url}
 ```
 
-- 9、访问次数最多的10个文件或页面
+## 9、访问次数最多的10个文件或页面
 
 ```
 cat log_file|awk '{print $11}'|sort|uniq -c|sort -nr | head -10
@@ -85,49 +85,49 @@ awk '{print $1}' log_file |sort -n -r |uniq -c | sort -n -r | head -20
 
 > 访问量最大的前20个ip
 
-- 10、通过子域名访问次数，依据referer来计算，稍有不准
+## 10、通过子域名访问次数，依据referer来计算，稍有不准
 
 ```
 cat access.log | awk '{print $11}' | sed -e ' s/http:\/\///' -e ' s/\/.*//' | sort | uniq -c | sort -rn | head -20
 ```
 
-- 11、列出传输大小最大的几个文件
+## 11、列出传输大小最大的几个文件
 
 ```
 cat www.access.log |awk '($7~/\.php/){print $10 " " $1 " " $4 " " $7}'|sort -nr|head -100
 ```
 
-- 12、列出输出大于200000byte(约200kb)的页面以及对应页面发生次数
+## 12、列出输出大于200000byte(约200kb)的页面以及对应页面发生次数
 
 ```
 cat www.access.log |awk '($10 > 200000 && $7~/\.php/){print $7}'|sort -n|uniq -c|sort -nr|head -100
 ```
 
-- 13、如果日志最后一列记录的是页面文件传输时间，则有列出到客户端最耗时的页面
+## 13、如果日志最后一列记录的是页面文件传输时间，则有列出到客户端最耗时的页面
 
 ```
 cat www.access.log |awk '($7~/\.php/){print $NF " " $1 " " $4 " " $7}'|sort -nr|head -100
 ```
 
-- 14、列出最最耗时的页面(超过60秒的)的以及对应页面发生次数
+## 14、列出最最耗时的页面(超过60秒的)的以及对应页面发生次数
 
 ```
 cat www.access.log |awk '($NF > 60 && $7~/\.php/){print $7}'|sort -n|uniq -c|sort -nr|head -100
 ```
 
-- 15、列出传输时间超过 30 秒的文件
+## 15、列出传输时间超过 30 秒的文件
 
 ```
 cat www.access.log |awk '($NF > 30){print $7}'|sort -n|uniq -c|sort -nr|head -20
 ```
 
-- 16、列出当前服务器每一进程运行的数量，倒序排列
+## 16、列出当前服务器每一进程运行的数量，倒序排列
 
 ```
 ps -ef | awk -F ' ' '{print $8 " " $9}' |sort | uniq -c |sort -nr |head -20
 ```
 
-- 17、查看apache当前并发访问数
+## 17、查看apache当前并发访问数
 
 对比httpd.conf中MaxClients的数字差距多少
 
@@ -135,7 +135,7 @@ ps -ef | awk -F ' ' '{print $8 " " $9}' |sort | uniq -c |sort -nr |head -20
 netstat -an | grep ESTABLISHED | wc -l
 ```
 
-- 18、可以使用如下参数查看数据
+## 18、可以使用如下参数查看数据
 
 ```
 ps -ef|grep httpd|wc -l1388
@@ -167,13 +167,13 @@ netstat -nat||grep ESTABLISHED|wc
 
 可查看所有建立连接的详细记录
 
-- 19、输出每个ip的连接数，以及总的各个状态的连接数
+## 19、输出每个ip的连接数，以及总的各个状态的连接数
 
 ```
 netstat -n | awk '/^tcp/ {n=split($(NF-1),array,":");if(n<=2)++S[array[(1)]];else++S[array[(4)]];++s[$NF];++N} END {for(a in S){printf("%-20s %s\n", a, S[a]);++I}printf("%-20s %s\n","TOTAL_IP",I);for(a in s) printf("%-20s %s\n",a, s[a]);printf("%-20s %s\n","TOTAL_LINK",N);}'
 ```
 
-- 20、其他的收集
+## 20、其他
 
 分析日志文件下 2012-05-04 访问页面最高 的前20个 URL 并排序
 
