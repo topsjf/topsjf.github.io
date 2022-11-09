@@ -8,7 +8,7 @@ export default defineUserConfig({
     theme: theme,
     base: "/",
     title: "topsjf",
-    description: "「小牛专属笔记本！",
+    description: "꧁「小牛专属笔记本」꧂",
     dest: "./dist",
     //预读取，开启pwa后建议为false
     shouldPrefetch: false,
