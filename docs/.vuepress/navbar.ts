@@ -21,9 +21,9 @@ export const navbarConfig = navbar([
     },
     {
         text: "网站相关",
-        icon: "about",
+        icon: "info",
         children: [
-            {text: "关于本站", icon: "zuozhe", link: "/about/about-this"},
+            {text: "关于本站", icon: "people", link: "/about/about-this"},
             {text: "网站历史",icon: "time",link: "/history/history"},
         ],
     },
