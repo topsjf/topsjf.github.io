@@ -5,8 +5,9 @@ title: Linux
 
 ## Linux
 
-- [Linux 基础](./basis/basis.md)
-- [常用Linux命令实例](./command-examples.md)
+- [Linux基础](./basis/basis.md)
+- [Linux常用命令实例](./command-examples.md)
+- [Linux常用异常分析](./exception-analysis.md)
 - [网卡配置](./network.md)
 - [yum源配置](./yum-repo.md)
 - [升级内核](./update-kernel.md)
