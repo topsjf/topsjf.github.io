@@ -1,6 +1,6 @@
 ---
 icon: linux
-title: 常用Linux命令实例
+title: Linux常用命令实例
 category: Linux
 date: 2022-10-11
 #顶置
