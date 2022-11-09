@@ -9,7 +9,7 @@ title: Linux
 - 网络安全+Python > 网络安全开发、自动化架构师。
 - 数据库+Python > 数据库开发、数据库自动化开发。
 
-- [SRE参考](https://www.zhihu.com/question/355429227?utm_id=0)
+- [SRE运维参考](https://zhuanlan.zhihu.com/p/536895461?utm_id=0)
 
 
 ## Linux
