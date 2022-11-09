@@ -3,6 +3,10 @@ icon: linux
 title: Linux
 ---
 
+- Linux云计算+GO > 运维自动化开发、devops开发或sre运维。
+- 网络安全+Python > 网络安全开发、自动化架构师。
+- 数据库+Python > 数据库开发、数据库自动化开发。
+
 ## Linux
 
 - [Linux基础](./basis/basis.md)
