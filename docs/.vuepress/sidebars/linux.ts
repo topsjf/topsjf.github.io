@@ -12,7 +12,7 @@ export const linuxJson =
         children: [
             {
                 text: "基础命令",
-                icon: "tool",
+                icon: "object",
                 prefix: "basis/",
                 collapsable: true,
                 children: linuxBasis,
