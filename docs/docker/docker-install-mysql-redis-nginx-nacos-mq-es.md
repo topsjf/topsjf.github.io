@@ -460,32 +460,27 @@ http://localhost:15672/#/	账号：guest
 
 https://www.elastic.co/cn/downloads/elasticsearch#ga-release
 
-> docker pull elasticsearch:7.17.4
->
-> docker pull kibana:7.17.4
+```shell
+docker pull elasticsearch:7.17.4
+docker pull kibana:7.17.4
+```
 
+```shell
+docker tag elasticsearch:7.17.4 registry.cn-chengdu.aliyuncs.com/jinfang/elasticsearch:7.17.4
+docker push registry.cn-chengdu.aliyuncs.com/jinfang/elasticsearch:7.17.4
+docker rmi elasticsearch:7.17.4
+```
 
+```shell
+docker tag kibana:7.17.4 registry.cn-chengdu.aliyuncs.com/jinfang/kibana:7.17.4
+docker push registry.cn-chengdu.aliyuncs.com/jinfang/kibana:7.17.4
+docker rmi kibana:7.17.4
+```
 
-> docker tag elasticsearch:7.17.4 registry.cn-chengdu.aliyuncs.com/jinfang/elasticsearch:7.17.4
->
-> docker push registry.cn-chengdu.aliyuncs.com/jinfang/elasticsearch:7.17.4
->
-> docker rmi elasticsearch:7.17.4
->
-> --------------------
->
-> docker tag kibana:7.17.4 registry.cn-chengdu.aliyuncs.com/jinfang/kibana:7.17.4
->
-> docker push registry.cn-chengdu.aliyuncs.com/jinfang/kibana:7.17.4
->
-> docker rmi kibana:7.17.4
-
-
-
-> docker pull registry.cn-chengdu.aliyuncs.com/jinfang/elasticsearch:7.17.4 存储和检索数据
->
-> docker pull registry.cn-chengdu.aliyuncs.com/jinfang/kibana:7.17.4 可视化数据
-
+```shell
+docker pull registry.cn-chengdu.aliyuncs.com/jinfang/elasticsearch:7.17.4 存储和检索数据
+docker pull registry.cn-chengdu.aliyuncs.com/jinfang/kibana:7.17.4 可视化数据
+```
 
 
 配置
