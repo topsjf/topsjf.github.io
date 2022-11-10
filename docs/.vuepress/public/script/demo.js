@@ -1,1 +1,1 @@
-// console.log("嵌入js测试6666")
+console.log("嵌入自定义js脚本测试")
