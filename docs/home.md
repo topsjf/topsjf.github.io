@@ -1,4 +1,5 @@
 ---
+home: true
 title: 快速导航
 heroImage: /heihei.gif
 heroText: 分类
