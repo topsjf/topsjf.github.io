@@ -7,7 +7,7 @@
 - [vuepress-theme-hope官网文档](https://vuepress-theme-hope.github.io/v2/zh/)、[github仓库](https://github.com/vuepress-theme-hope/vuepress-theme-hope)
 - [使用Java压缩md文件中使用到的图片](https://gitee.com/cps007/imgfileserve)
 --------
-- [releases](releases)
+- [releases](https://github.com/topsjf/topsjf.github.io/releases)
 
 
 -------
