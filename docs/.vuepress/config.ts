@@ -1,6 +1,6 @@
 // .vuepress/config.ts
-import theme from "./theme";
-import {cp, search} from "./plugins";
+import theme from "./theme.ts";
+import {cp, search} from "./plugins/index.ts";
 import {defineUserConfig, viteBundler} from "vuepress";
 import {copyCode} from "vuepress-theme-hope";
 

@@ -14,7 +14,7 @@ import {
     openSources,
     toolsJson,
     webJson
-} from "./sidebars";
+} from "./sidebars/index.ts";
 
 /**
  * 应该把更精确的路径放置在前边
