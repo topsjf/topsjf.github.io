@@ -1,4 +1,3 @@
-// @ts-ignore
 export * from "./search.ts";
-// @ts-ignore
+export * from "./docsearch.ts";
 export * from "./cp.ts";
