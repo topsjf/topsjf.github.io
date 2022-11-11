@@ -1,6 +1,6 @@
 import {hopeTheme} from "vuepress-theme-hope";
 import {navbarConfig} from "./navbar.ts";
-import {sidebarConfig} from "./sidebar/index.ts";
+import {sidebarConfig} from "./sidebar.ts";
 
 export default hopeTheme({
     logo: "/logo.png",
