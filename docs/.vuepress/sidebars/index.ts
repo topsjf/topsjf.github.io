@@ -1,5 +1,5 @@
 export * from "./allSources.ts";
-export * from "./abou.ts";
+export * from "./about.ts";
 export * from "./books.ts";
 export * from "./architectures.ts";
 export * from "./open-source.ts";
