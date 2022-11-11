@@ -1,13 +1,13 @@
 ## topsjf
 
-- <a href="https://topsjf.github.io/" target="_blank">🚀🚀预览地址🚀🚀</a>
-- <a href="https://github.com/topsjf/topsjf.github.io" target="_blank">github仓库</a>
-- <a href="https://gitee.com/topsjf/topsjf.gitee.io" target="_blank">gitee仓库</a>
-- <a href="https://github.com/topsjf/giscus-discussions" target="_blank">存储评论消息仓库</a>
-- <a href="https://vuepress-theme-hope.github.io/v2/zh/" target="_blank">vuepress-theme-hope官网文档</a>、<a href="https://github.com/vuepress-theme-hope/vuepress-theme-hope" target="_blank">github仓库</a>
-- <a href="https://gitee.com/cps007/imgfileserve" target="_blank">使用Java压缩md文件中使用到的图片</a>
+- [🚀🚀预览地址🚀🚀](https://topsjf.github.io/)
+- [github仓库](https://github.com/topsjf/topsjf.github.io)
+- [gitee仓库](https://gitee.com/topsjf/topsjf.gitee.io)
+- [存储评论消息仓库](https://github.com/topsjf/giscus-discussions)
+- [vuepress-theme-hope官网文档](https://vuepress-theme-hope.github.io/v2/zh/)、[github仓库](https://github.com/vuepress-theme-hope/vuepress-theme-hope)
+- [使用Java压缩md文件中使用到的图片](https://gitee.com/cps007/imgfileserve)
 --------
-- <a href="https://github.com/topsjf/topsjf.github.io/releases" target="_blank">releases</a>
+- [releases](https://github.com/topsjf/topsjf.github.io/releases)
 
 
 -------
@@ -22,7 +22,7 @@
 ```
 ++++++++vue++++++++vuepress++++++++++vuepress-theme-hope
 - -  (`3.2.37+`)->(`2.0.0-beta.49`)->(`2.0.0-beta.91`) **［使用中］** 
-- -  (`3.2.37+`)->(`2.0.0-beta.50`)->(`2.0.0-beta.94`) 部署github-pages后，手机端的折叠按钮开关报错
+- -  (`3.2.37+`)->(`2.0.0-beta.50`)->(`2.0.0-beta.94`) 部署github-pages后，手机端的一些js报错
 - -  (`3.2.37+`)->(`2.0.0-beta.51`)->(`2.0.0-beta.95`) 同上
 - -  (`3.2.38+`)->(`2.0.0-beta.51`)->(`2.0.0-beta.97`) 同上
 - -  (`3.2.39+`)->(`2.0.0-beta.51`)->(`2.0.0-beta.100`) 同上
