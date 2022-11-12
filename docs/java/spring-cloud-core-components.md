@@ -1,7 +1,7 @@
 ---
 icon: edit
 title: spring cloud 的几大组件
-category: cloud 
+category: Cloud 
 date: 2020-01-01 
 tag:
 - cloud
