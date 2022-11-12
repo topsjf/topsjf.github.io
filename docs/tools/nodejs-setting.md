@@ -131,9 +131,9 @@ npm config set cache "D:\rj-win\nodejs\node_cache"
 
 ### 配置环境变量
 
-NODE_PATH ：`D:\rj-win\nodejs\node_global\node_modules`
+NODE_PATH ： `D:\rj-win\nodejs\node_global\node_modules` 
 
-path：`D:\rj-win\nodejs\`
+path： `D:\rj-win\nodejs\` 
 
 
 ## vue 模块化开发
