@@ -123,7 +123,7 @@ npm init vuepress-theme-hope@next docs
 corepack enable
 corepack prepare pnpm@7.14.2 --activate
 ```
-
+卸载：corepack disable pnpm
 
 - 技术版本列表
 
