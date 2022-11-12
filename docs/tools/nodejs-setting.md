@@ -68,12 +68,18 @@ cnpm -v
 
 创建文件夹：`node_global`、`node_cache`
 
-> npm config -help -s 
->
+npm config -help -s 
+
+参数
+
 > npm config set 
+>
 > npm config get 
+>
 > npm config delete cache && npm config delete prefix 
+>
 > npm config list
+>
 > npm config edit
 
 ```shell
@@ -97,9 +103,10 @@ export PATH=$PATH:${NODE_PATH}/bin #:${NODE_M_PATH}
 
 `node -v && npm -v`
 
-> npm i -g element-ui -S && npm install -g webpack && npm install -D webpack-cli -g
->
-> npm install -g vue-cli 会存放在`/rj/nodejs/node_global/{bin,lib}`目录下
+```
+npm i -g element-ui -S && npm install -g webpack && npm install -D webpack-cli -g
+```
+> `npm install -g vue-cli` 会存放在`/rj/nodejs/node_global/{bin,lib}`目录下
 
 ## window配置
 
