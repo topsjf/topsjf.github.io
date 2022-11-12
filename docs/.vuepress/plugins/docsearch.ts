@@ -1,4 +1,7 @@
 // .vuepress/docsearch.ts
+//    "@vuepress/plugin-docsearch": "2.0.0-beta.49",
+//    "@algolia/client-search": "4.14.2",
+    
 import { docsearchPlugin } from "@vuepress/plugin-docsearch";
 
 export const docsearch = () => docsearchPlugin({
