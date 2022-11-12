@@ -122,9 +122,12 @@ OS name: "linux", version: "5.4.50-amd64-desktop", arch: "amd64", family: "unix"
 
 `.jar.original` 结尾文件
 
-> .jar.original 是普通jar包，不包含依赖
-> .jar 是可执行jar包，包含了pom中的所有依赖，可以直接用java -jar 命令执行
-> 如果是部署，就用.jar
-> 如果是给别的项目用，就要给.jar.original这个包
+> .jar.original 是普通 jar 包，不包含依赖
+> 
+> .jar 是可执行 jar 包，包含了 pom 中的所有依赖，可以直接用 `java -jar` 命令执行
+> 
+> 如果是部署，就用 .jar
+> 
+> 如果是给别的项目用，就要给 `.jar.original` 这个包
 
 
