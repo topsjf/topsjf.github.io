@@ -393,7 +393,7 @@ C=3
 >
 > 整型（byte，short，int，long），字符型（char），浮点型（float，double），布尔型（boolean）
 
-![](./basic-grammar.assets/datatype.jpg)
+![](./basic-grammar.assets/true-datatype.jpg)
 
 
 ### 基本变量类型
