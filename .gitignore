@@ -8,6 +8,6 @@ node_modules
 docs/.vuepress/**.cache/
 docs/.vuepress/**.temp/
 dist
-*.jar
-*.log
+**.jar
+**.log
 logs
