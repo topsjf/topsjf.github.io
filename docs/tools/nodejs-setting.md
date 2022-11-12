@@ -43,21 +43,30 @@ npm config set registry https://registry.npmjs.org
 ```
 查看配置：npm config list
 
-npx -p npm@6 npm i --legacy-peer-deps
+`npx -p npm@6 npm i --legacy-peer-deps`
+
+### 安装 pnpm
 
 ```
+corepack enable
+corepack prepare pnpm@7.14.2 --activate
+```
+卸载：`corepack disable pnpm`
 
 ### 安装 cnpm
 
 ```bash
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 sudo ln -s /rj/nodejs/bin/cnpm /usr/local/bin/ && ls /usr/local/bin/
+
 cnpm -v
 ```
 
 > "user" config from /home/jf123/.npmrc
 
-全局模块的位置：创建文件夹：node_global、node_cache
+### 全局模块的位置
+
+创建文件夹：`node_global`、`node_cache`
 
 > npm config -help -s 
 >
@@ -68,21 +77,25 @@ cnpm -v
 > npm config edit
 
 ```shell
-npm config set prefix "/rj/nodejs/node_global" && npm config set cache "/rj/nodejs/node_cache" && npm config list
+npm config set prefix "/rj/nodejs/node_global" 
+
+npm config set cache "/rj/nodejs/node_cache"
+
+npm config list
 ```
 
-配置环境变量：
+### 配置环境变量
 
-sudo vim /etc/profile
+`sudo vim /etc/profile`
 
 ```bash
 export NODE_PATH=/rj/nodejs/
 export PATH=$PATH:${NODE_PATH}/bin #:${NODE_M_PATH}
 ```
 
-source /etc/profile		
+`source /etc/profile`
 
-node -v && npm -v
+`node -v && npm -v`
 
 > npm i -g element-ui -S && npm install -g webpack && npm install -D webpack-cli -g
 >
@@ -94,18 +107,22 @@ node -v && npm -v
 
 [下载msi 16.13.2 安装](https://cdn.npm.taobao.org/dist/node/v16.13.2/node-v16.13.2-x64.msi)
 
-配置npm淘宝源：npm config set registry http://registry.npm.taobao.org
+### 配置npm淘宝源
 
-全局模块的位置：创建文件夹：node_global、node_cache
+`npm config set registry http://registry.npm.taobao.org`
 
-`最好赋予nodejs文件权限，不然系统自动创建文件时报错`
+### 全局模块的位置
+
+创建文件夹：`node_global`、`node_cache`
+
+*最好赋予nodejs文件权限，不然系统自动创建文件时报错*
 
 ```shell
 npm config set prefix "D:\rj-win\nodejs\node_global"
 npm config set cache "D:\rj-win\nodejs\node_cache"
 ```
 
-配置环境变量：
+### 配置环境变量
 
 NODE_PATH ：D:\rj-win\nodejs\node_global\node_modules
 
