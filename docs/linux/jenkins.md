@@ -421,7 +421,7 @@ jenkins 有 2 种流水线分为 **声明式流水线**与**脚本化流水线**
 - **stage** ：定义流水线的执行过程（相当于一个阶段），比如下文所示的 `Build、Test、Deploy`， 但是这个名字是根据实际情况进行定义的，并非固定的名字
 - **steps** ：执行某阶段具体的步骤。
 
-```yaml
+```xml
 //Jenkinsfile (Declarative Pipeline)
 pipeline {
   agent any
