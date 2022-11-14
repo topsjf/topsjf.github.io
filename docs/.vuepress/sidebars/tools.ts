@@ -21,19 +21,21 @@ export const toolsJson =
                 icon: "database",
                 prefix: "database/",
                 collapsable: true,
-                children: ["CHINER", "datagrip", "DBeaver", "screw"],
+                children: "structure",
+                //children: ["CHINER", "datagrip", "DBeaver", "screw"],
             },
             {
                 text: "Git",
                 icon: "git",
                 prefix: "git/",
                 collapsable: true,
-                children: [
-                    "git-setting",
-                    "git-intro",
-                    "github-tips",
-                    "deploy-gh-pages"
-                ],
+                children: "structure",
+                //children: [
+                //    "git-setting",
+                //    "git-intro",
+                //    "github-tips",
+                //    "deploy-gh-pages"
+               // ],
             }
         ],
     }

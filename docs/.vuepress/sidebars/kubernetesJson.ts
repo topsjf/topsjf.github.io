@@ -7,18 +7,19 @@ export const kubernetesJson =
         icon: "/icons/k8s/k8s_16x16.png",
         prefix: "k8s/",
         collapsable: true,
-        children: [
-            "basis",
-            "ingress",
-            "helm",
-            "rancher",
-            "kube-sphere",
-            "kubeoperator",
-            "kuboard",
-            "pod-yaml",
-            "nfs-pv-pvc-config-secret",
-            "install-application",
-            "deploys",
-        ]
+        children: "structure",
+       // children: [
+        //    "basis",
+        //    "ingress",
+        //    "helm",
+       //     "rancher",
+        //    "kube-sphere",
+        //    "kubeoperator",
+       //     "kuboard",
+       //     "pod-yaml",
+        //    "nfs-pv-pvc-config-secret",
+         //   "install-application",
+      //      "deploys",
+       // ]
     }
 

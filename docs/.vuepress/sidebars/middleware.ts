@@ -13,12 +13,13 @@ export const middlewareJson =
                 icon: "tool",
                 prefix: "mq/",
                 collapsable: true,
-                children: [
-                    "mq-rabbit",
-                    "mq-rocket",
-                    "kafka",
-                    "mq-active",
-                ],
+                children: "structure",
+                //children: [
+                //    "mq-rabbit",
+                //    "mq-rocket",
+                //    "kafka",
+                 //   "mq-active",
+              //  ],
             },
             "nginx",
             {
@@ -26,9 +27,10 @@ export const middlewareJson =
                 icon: "redis",
                 prefix: "redis/",
                 collapsable: true,
-                children: [
-                    "redis",
-                ]
+                children: "structure",
+                //children: [
+                 //   "redis",
+              //  ]
             },
             "elastic-search",
 

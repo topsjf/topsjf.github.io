@@ -15,7 +15,8 @@ export const linuxJson =
                 icon: "object",
                 prefix: "basis/",
                 collapsable: true,
-                children: linuxBasis,
+                //children: linuxBasis,
+                children: "structure",
             },
             "command-examples",
             "exception-analysis",
@@ -28,20 +29,20 @@ export const linuxJson =
                 icon: "tool",
                 prefix: "ansible/",
                 collapsable: true,
-                children: [
-                    "ansible-basis",
-                    "ansible",
-                    "ansible-doc",
-                    "ansible-playbook",
-                    "ansible-galaxy",
-                    "ansible-jdk",
-                    "ansible-docker",
-                    "ansible-mysql",
-                    "ansible-redis",
-                    "ansible-nginx",
-                ]
+                children: "structure",
+               // children: [
+                //    "ansible-basis",
+                 //   "ansible",
+                 //   "ansible-doc",
+                 //   "ansible-playbook",
+                  //  "ansible-galaxy",
+                 //   "ansible-jdk",
+                //    "ansible-docker",
+                 //   "ansible-mysql",
+                //    "ansible-redis",
+                 //   "ansible-nginx",
+              //  ]
             },
             "shell",
         ],
     }
-

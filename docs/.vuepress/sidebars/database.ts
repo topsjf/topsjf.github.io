@@ -23,9 +23,7 @@ export const databaseJson =
                 text: "oracle",
                 icon: "tool",
                 prefix: "oracle/",
-                collapsable: true,
-                children: [
-                ]
+                children: "structure",
             },
         ],
     }

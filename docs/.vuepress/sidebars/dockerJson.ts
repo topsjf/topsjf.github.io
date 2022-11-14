@@ -7,13 +7,14 @@ export const dockerJson =
         icon: "/icons/docker/docker_16x16.png",
         prefix: "docker/",
         collapsable: true,
-        children: [
-                "docker-note",
-                "docker-install-mysql-redis-nginx-nacos-mq-es",
-                "docker-intro",
-                "docker-in-action",
-                "dockerfile-centos",
-                "dockerfile-jdk",
-        ]
+        children: "structure",
+        //children: [
+        //        "docker-note",
+        //        "docker-install-mysql-redis-nginx-nacos-mq-es",
+        //        "docker-intro",
+        //        "docker-in-action",
+        //        "dockerfile-centos",
+        //        "dockerfile-jdk",
+        //]
     }
 
