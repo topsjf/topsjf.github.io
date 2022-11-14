@@ -35,8 +35,6 @@ jobs:
 
       - name: 构建文档
         env:
-          BASE: /new/
-          HOSTNAME: https://topsjf.github.io/
           NODE_OPTIONS: --max_old_space_size=8192
         run: |-
           pnpm run docs:build

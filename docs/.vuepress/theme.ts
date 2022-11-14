@@ -34,10 +34,6 @@ export default hopeTheme({
             // 侧边栏
             sidebar: sidebarConfig,
 
-            footer: "", //'<a href="https://beian.miit.gov.cn/" target="_blank">黔ICP备2022xxxxxx号-1</a>',
-          
-            displayFooter: true,
-
             blog: {
                 intro: "/about/about-this",
                 sidebarDisplay: "mobile",
@@ -80,6 +76,10 @@ export default hopeTheme({
             },
         },
     },
+
+    footer: "", //'<a href="https://beian.miit.gov.cn/" target="_blank">黔ICP备2022xxxxxx号-1</a>',
+          
+    displayFooter: true,
     
     plugins: {
         
@@ -112,19 +112,6 @@ export default hopeTheme({
             presentation: {
                 plugins: ["highlight", "math", "search", "notes", "zoom"],
             },
-            stylize: [
-               {
-                   matcher: "Recommended",
-                   replacer: ({ tag }) => {
-                        if (tag === "em")
-                            return {
-                                tag: "Badge",
-                                attrs: { type: "tip" },
-                                content: "Recommended",
-                            };
-                    },
-                },
-            ],
             sub: true,
             sup: true,
             tabs: true,
@@ -178,6 +165,9 @@ export default hopeTheme({
                 color: "#ffffff",
             },
             manifest: {
+                name: "topsjf 博客",
+                short_name: "topsjf Blog",
+                description: "topsjf 博客",
                 icons: [
                     {
                         src: "/assets/icon/chrome-mask-512.png",

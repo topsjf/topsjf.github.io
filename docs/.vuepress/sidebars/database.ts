@@ -13,10 +13,11 @@ export const databaseJson =
                 icon: "mysql",
                 prefix: "mysql/",
                 collapsable: true,
-                children: [
-                    "install",
-                    "MySQL",
-                ]
+                //children: [
+                //    "install",
+                //    "MySQL",
+                //]
+                children: "structure",
             },
             {
                 text: "oracle",
