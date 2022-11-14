@@ -452,7 +452,8 @@ pipeline {
 **参数说明:**
 
 - **node** ：在任何可用的代理上执行流水线或它的任何阶段，也可以指定到具体的节点
-- **stage** ：和声明式的含义一致，定义流水线的阶段。Stage 块在脚本化流水线语法中是可选的，然而在脚本化流水线中实现 stage 块，可以清楚地在 Jenkins UI 界面中显示每个 stage 的任务子集。
+- **stage** ：和声明式的含义一致，定义流水线的阶段。Stage 块在脚本化流水线语法中是可选的，
+然而在脚本化流水线中实现 stage 块，可以清楚地在 Jenkins UI 界面中显示每个 stage 的任务子集。
 
 ```yaml
 //Jenkinsfile (Scripted Pipeline)
@@ -490,7 +491,8 @@ pipeline {
 
 #### Sections
 
-声明式流水线中的 Sections 不是一个关键字或指令，而是包含一个或多个 `Agent、Stages、 post、Directives` 和 `Steps` 的代码区域块。
+声明式流水线中的 Sections 不是一个关键字或指令，
+而是包含一个或多个 `Agent`、`Stages`、 `post`、`Directives` 和 `Steps` 的代码区域块。
 
 1.Agent
 
@@ -762,24 +764,27 @@ pipeline {
 
 3.Post
 
-Post 一般用于流水线结束后的进一步处理，比如错误通知等。Post 可以针对流水线不同的结果做出不同的处理，就像开发程序的错误处理，比如 Python 语言的 try catch。
+Post 一般用于流水线结束后的进一步处理，比如错误通知等。
+Post 可以针对流水线不同的结果做出不同的处理，就像开发程序的错误处理，
+比如 Python 语言的 `try catch`。
 
 Post 可以定义在 Pipeline 或 stage 中，目前支持以下条件
 
-- always：无论 Pipeline 或 stage 的完成状态如何，都允许运行该 post 中定义的指令；
-- changed：只有当前 Pipeline 或 stage 的完成状态与它之前的运行不同时，才允许在该 post 部分运行该步骤；
-- fixed：当本次 Pipeline 或 stage 成功，且上一次构建是失败或不稳定时，允许运行该 post 中定义的指令；
-- regression：当本次 Pipeline 或 stage 的状态为失败、不稳定或终止，且上一次构建的 状态为成功时，允许运行该 post 中定义的指令；
-- failure：只有当前 Pipeline 或 stage 的完成状态为失败（failure），才允许在 post 部分运行该步骤，通常这时在 Web 界面中显示为红色
-- success：当前状态为成功（success），执行 post 步骤，通常在 Web 界面中显示为蓝色 或绿色
-- unstable：当前状态为不稳定（unstable），执行 post 步骤，通常由于测试失败或代码 违规等造成，在 Web 界面中显示为黄色
-- aborted：当前状态为终止（aborted），执行该 post 步骤，通常由于流水线被手动终止触发，这时在 Web 界面中显示为灰色；
-- unsuccessful：当前状态不是 success 时，执行该 post 步骤；
-- cleanup：无论 pipeline 或 stage 的完成状态如何，都允许运行该 post 中定义的指令。和 always 的区别在于，cleanup 会在其它执行之后执行。
+- **always**：无论 Pipeline 或 stage 的完成状态如何，都允许运行该 post 中定义的指令；
+- **changed**：只有当前 Pipeline 或 stage 的完成状态与它之前的运行不同时，才允许在该 post 部分运行该步骤；
+- **fixed**：当本次 Pipeline 或 stage 成功，且上一次构建是失败或不稳定时，允许运行该 post 中定义的指令；
+- **regression**：当本次 Pipeline 或 stage 的状态为失败、不稳定或终止，且上一次构建的 状态为成功时，允许运行该 post 中定义的指令；
+- **failure**：只有当前 Pipeline 或 stage 的完成状态为失败（failure），才允许在 post 部分运行该步骤，通常这时在 Web 界面中显示为红色
+- **success**：当前状态为成功（success），执行 post 步骤，通常在 Web 界面中显示为蓝色 或绿色
+- **unstable**：当前状态为不稳定（unstable），执行 post 步骤，通常由于测试失败或代码 违规等造成，在 Web 界面中显示为黄色
+- **aborted**：当前状态为终止（aborted），执行该 post 步骤，通常由于流水线被手动终止触发，这时在 Web 界面中显示为灰色；
+- **unsuccessful**：当前状态不是 success 时，执行该 post 步骤；
+- **cleanup**：无论 pipeline 或 stage 的完成状态如何，都允许运行该 post 中定义的指令。和 always 的区别在于，cleanup 会在其它执行之后执行。
 
 示例
 
-一般情况下 post 部分放在流水线的底部，比如本实例，无论 stage 的完成状态如何，都会输出一条 `I will always say Hello again!` 信息
+一般情况下 post 部分放在流水线的底部，比如本实例，无论 stage 的完成状态如何，
+都会输出一条 `I will always say Hello again!` 信息
 
 ```
 //Jenkinsfile (Declarative Pipeline)
@@ -865,7 +870,7 @@ pipeline {
 ```
 
 
-#### Directives
+#### Directives 条件判断或预处理数据
 
 Directives 可用于一些执行 stage 时的条件判断或预处理一些数据，和 Sections 一致，Directives 不是一个关键字或指令，
 而是包含了 `environment、options、parameters、triggers、stage、tools、 input、when` 等配置。
@@ -873,9 +878,14 @@ Directives 可用于一些执行 stage 时的条件判断或预处理一些数�
 1.Environment
 
 Environment 主要用于在流水线中配置的一些环境变量，根据配置的位置决定环境变量的作用域。
-可以定义在 pipeline 中作为全局变量，也可以配置在 stage 中作为该 stage 的环境变量。该指令支持一个特殊的方法 credentials()，
-该方法可用于在 Jenkins 环境中通过标识符访问预定义的凭证。对于类型为 Secret Text 的凭证，credentials()可以将该 Secret 中的文本内容赋值给环境变量。
-对于类型为标准的账号密码型的凭证，指定的环境变量为 username 和 password，并且也会定义两个额外的环境变量，分别为MYVARNAME_USR和MYVARNAME_PSW。
+
+可以定义在 pipeline 中作为全局变量，也可以配置在 stage 中作为该 stage 的环境变量。该指令支持一个特殊的方法 `credentials()`，
+该方法可用于在 Jenkins 环境中通过标识符访问预定义的凭证。
+
+对于类型为 Secret Text 的凭证，`credentials()`可以将该 Secret 中的文本内容赋值给环境变量。
+
+对于类型为标准的账号密码型的凭证，指定的环境变量为 username 和 password，并且也会定义两个额外的环境变量，分别为`MYVARNAME_USR`和`MYVARNAME_PSW`。
+
 
 - 基本变量使用
 
@@ -929,9 +939,9 @@ pipeline {
 
 这里使用 HARBOR 变量进行演示，默认情况下账号密码型的凭证会自动创建 3 个变量
 
-- HARBOR_USR: 会把凭证中 username 值赋值给这个变量
-- HARBOR_PSW: 会把凭证中 password 值赋值给这个变量
-- HARBOR: 默认情况下赋值的值为usernamme:password
+- **HARBOR_USR**: 会把凭证中 username 值赋值给这个变量
+- **HARBOR_PSW**: 会把凭证中 password 值赋值给这个变量
+- **HARBOR**: 默认情况下赋值的值为 `usernamme:password`
 
 ```
 //这里使用k8s的kubeconfig文件示例
@@ -957,14 +967,14 @@ Jenkins 流水线支持很多内置指令，比如 retry 可以对失败的步�
 
 比较常用的指令如下:
 
-- buildDiscarder：保留多少个流水线的构建记录
-- disableConcurrentBuilds：禁止流水线并行执行，防止并行流水线同时访问共享资源导致流水线失败。
-- disableResume：如果控制器重启，禁止流水线自动恢复。
-- newContainerPerStage：agent 为 docker 或 dockerfile 时，每个阶段将在同一个节点的新容器中运行，而不是所有的阶段都在同一个容器中运行。
-- quietPeriod：流水线静默期，也就是触发流水线后等待一会在执行。
-- retry：流水线失败后重试次数。
-- timeout：设置流水线的超时时间，超过流水线时间，job 会自动终止。如果不加 unit 参数默认为 1 分。
-- timestamps：为控制台输出时间戳。
+- **buildDiscarder**：保留多少个流水线的构建记录
+- **disableConcurrentBuilds**：禁止流水线并行执行，防止并行流水线同时访问共享资源导致流水线失败。
+- **disableResume**：如果控制器重启，禁止流水线自动恢复。
+- **newContainerPerStage**：agent 为 docker 或 dockerfile 时，每个阶段将在同一个节点的新容器中运行，而不是所有的阶段都在同一个容器中运行。
+- **quietPeriod**：流水线静默期，也就是触发流水线后等待一会在执行。
+- **retry**：流水线失败后重试次数。
+- **timeout**：设置流水线的超时时间，超过流水线时间，job 会自动终止。如果不加 unit 参数默认为 1 分。
+- **timestamps**：为控制台输出时间戳。
 
 
 **定义在 pipeline 中**
@@ -998,7 +1008,10 @@ pipeline {
 
 **定义在 stage 中**
 
-Option 除了写在 Pipeline 顶层，还可以写在 stage 中，但是写在 stage 中的 option 仅支持 retry、 timeout、timestamps，或者是和 stage 相关的声明式选项，比如 skipDefaultCheckout。处于 stage 级别的 options 写法如下
+Option 除了写在 Pipeline 顶层，还可以写在 stage 中，但是写在 stage 中的 option 仅支持 `retry、 timeout、timestamps`，
+或者是和 stage 相关的声明式选项，比如 `skipDefaultCheckout`。
+
+处于 stage 级别的 options 写法如下
 
 ```
 pipeline {
@@ -1025,20 +1038,21 @@ pipeline {
 
 3.Parameters
 
-Parameters 提供了一个用户在触发流水线时应该提供的参数列表，这些用户指定参数的值可以通过 params 对象提供给流水线的 step（步骤）。只能定义在 pipeline 顶层。
+Parameters 提供了一个用户在触发流水线时应该提供的参数列表，这些用户指定参数的值可以通过 params 对象提供给流水线的 step（步骤）。
+只能定义在 pipeline 顶层。
 
 **目前支持的参数类型如下**
 
-- string：字符串类型的参数。
-- text：文本型参数，一般用于定义多行文本内容的变量。
-- booleanParam：布尔型参数。
-- choice：选择型参数，一般用于给定几个可选的值，然后选择其中一个进行赋值。
-- password：密码型变量，一般用于定义敏感型变量，在 Jenkins 控制台会输出为*。
+- **string**：字符串类型的参数。
+- **text**：文本型参数，一般用于定义多行文本内容的变量。
+- **booleanParam**：布尔型参数。
+- **choice**：选择型参数，一般用于给定几个可选的值，然后选择其中一个进行赋值。
+- **password**：密码型变量，一般用于定义敏感型变量，在 Jenkins 控制台会输出为 `*` 。
 
 **插件 Parameters**
 
-- imageTag：镜像 tag，需要安装 Image Tag Parameter 插件后使用
-- gitParameter：获取 git 仓库分支，需要 Git Parameter 插件后使用
+- **imageTag**：镜像 tag，需要安装 `Image Tag Parameter` 插件后使用
+- **gitParameter**：获取 git 仓库分支，需要 `Git Parameter` 插件后使用
 
 示例
 
@@ -1071,9 +1085,9 @@ pipeline {
 
 4.Triggers
 
-在 Pipeline 中可以用 triggers 实现自动触发流水线执行任务，可以通过 Webhook、Cron、 pollSCM 和 upstream 等方式触发流水线。
+在 Pipeline 中可以用 triggers 实现自动触发流水线执行任务，可以通过 `Webhook、Cron、 pollSCM` 和 `upstream` 等方式触发流水线。
 
-Cron
+**Cron**
 
 定时构建假如某个流水线构建的时间比较长，或者某个流水线需要定期在某个时间段执行构建，可以 使用 cron 配置触发器，比如周一到周五每隔四个小时执行一次
 
@@ -1097,11 +1111,11 @@ pipeline {
 }
 ```
 
-Upstream
+**Upstream**
 
 Upstream 可以根据上游 job 的执行结果决定是否触发该流水线。比如当 job1 或 job2 执行成功时触发该流水线
 
-目前支持的状态有SUCCESS、UNSTABLE、FAILURE、NOT_BUILT、ABORTED等。
+目前支持的状态有 `SUCCESS`、`UNSTABLE`、`FAILURE`、`NOT_BUILT`、`ABORTED`等。
 
 ```
 pipeline {
@@ -1125,11 +1139,11 @@ Input 字段可以实现在流水线中进行交互式操作，比如选择要�
 
 配置 Input 支持以下选项
 
-- message：必选，需要用户进行 input 的提示信息，比如：“是否发布到生产环境？”；
-- id：可选，input 的标识符，默认为 stage 的名称；
-- ok：可选，确认按钮的显示信息，比如：“确定”、“允许”；
-- submitter：可选，允许提交 input 操作的用户或组的名称，如果为空，任何登录用户均可提交 input；
-- parameters：提供一个参数列表供 input 使用。
+- **message**：必选，需要用户进行 input 的提示信息，比如：“是否发布到生产环境？”；
+- **id**：可选，input 的标识符，默认为 stage 的名称；
+- **ok**：可选，确认按钮的显示信息，比如：“确定”、“允许”；
+- **submitter**：可选，允许提交 input 操作的用户或组的名称，如果为空，任何登录用户均可提交 input；
+- **parameters**：提供一个参数列表供 input 使用。
 
 假如需要配置一个提示消息为“还继续么”、确认按钮为“继续”、提供一个 PERSON 的变量的参数，并且只能由登录用户为 alice 和 bob 提交的 input 流水线
 
@@ -1156,21 +1170,22 @@ pipeline {
 
 6.when
 
-When 指令允许流水线根据给定的条件决定是否应该执行该 stage，when 指令必须包含至少 一个条件。如果 when 包含多个条件，所有的子条件必须都返回 True，stage 才能执行。
+When 指令允许流水线根据给定的条件决定是否应该执行该 stage，when 指令必须包含至少 一个条件。
+如果 when 包含多个条件，所有的子条件必须都返回 True，stage 才能执行。
 
-When 也可以结合 not、allOf、anyOf 语法达到更灵活的条件匹配。
+When 也可以结合 `not、allOf、anyOf` 语法达到更灵活的条件匹配。
 
-目前比较常用的内置条件如下
+**目前比较常用的内置条件如下**
 
-branch：当正在构建的分支与给定的分支匹配时，执行这个 stage。注意，branch 只适用于多分支流水线
-changelog：匹配提交的 changeLog 决定是否构建，例如:when { changelog '.*^\\[DEPENDENCY\\] .+$' }
-environment：当指定的环境变量和给定的变量匹配时，执行这个 stage，例如：when { environment name: 'DEPLOY_TO', value: 'production' }
-equals：当期望值和实际值相同时，执行这个 stage，例如：when { equals expected: 2, actual: currentBuild.number }；
-expression：当指定的 Groovy 表达式评估为 True，执行这个 stage，例如：when { expression { return params.DEBUG_BUILD } }；
-tag：如果 TAG_NAME 的值和给定的条件匹配，执行这个 stage，例如：when { tag "release-" }；
-not：当嵌套条件出现错误时，执行这个 stage，必须包含一个条件，例如：when { not { branch 'master' } }；
-allOf：当所有的嵌套条件都正确时，执行这个 stage，必须包含至少一个条件，例如：when { allOf { branch 'master'; environment name: 'DEPLOY_TO', value: 'production' } }；
-anyOf：当至少有一个嵌套条件为 True 时，执行这个 stage，例如：when { anyOf { branch 'master'; branch 'staging' } }。
+- **branch**：当正在构建的分支与给定的分支匹配时，执行这个 stage。注意，branch 只适用于多分支流水线
+- **changelog**：匹配提交的 changeLog 决定是否构建，例如: `when { changelog '.*^\\[DEPENDENCY\\] .+$' }`
+- **environment**：当指定的环境变量和给定的变量匹配时，执行这个 stage，例如：`when { environment name: 'DEPLOY_TO', value: 'production' }`
+- **equals**：当期望值和实际值相同时，执行这个 stage，例如：`when { equals expected: 2, actual: currentBuild.number }；`
+- **expression**：当指定的 Groovy 表达式评估为 True，执行这个 stage，例如：`when { expression { return params.DEBUG_BUILD } }；`
+- **tag**：如果 TAG_NAME 的值和给定的条件匹配，执行这个 stage，例如：`when { tag "release-" }；`
+- **not**：当嵌套条件出现错误时，执行这个 stage，必须包含一个条件，例如：`when { not { branch 'master' } }；`
+- **allOf**：当所有的嵌套条件都正确时，执行这个 stage，必须包含至少一个条件，例如：`when { allOf { branch 'master'; environment name: 'DEPLOY_TO', value: 'production' } }；`
+- **anyOf**：当至少有一个嵌套条件为 True 时，执行这个 stage，例如：`when { anyOf { branch 'master'; branch 'staging' } })`。
 
 示例：当分支为 main 时执行 Example Deploy 步骤
 
@@ -1194,7 +1209,9 @@ pipeline {
   }
 }
 ```
-也可以同时配置多个条件，比如分支是 production，而且 DEPLOY_TO 变量的值为 main 时，才执行 Example Deploy
+
+也可以同时配置多个条件，比如分支是 production，而且 `DEPLOY_TO` 变量的值为 main 时，才执行 `Example Deploy`
+
 ```
 pipeline {
   agent any
@@ -1215,7 +1232,8 @@ pipeline {
 }
 ```
 
-也可以使用 anyOf 进行匹配其中一个条件即可，比如分支为 main 或 DEPLOY_TO 为 main 或 master 时执行 Deploy
+也可以使用 `anyOf` 进行匹配其中一个条件即可，比如分支为 main 或 `DEPLOY_TO` 为 main 或 master 时执行 Deploy
+
 ```
 pipeline {
   agent any
@@ -1236,7 +1254,8 @@ pipeline {
 }
 ```
 
-也可以使用 expression 进行正则匹配，比如当 BRANCH_NAME 为 main 或 master，并且 DEPLOY_TO 为 master 或 main 时才会执行 Example Deploy
+也可以使用 `expression` 进行正则匹配，比如当 `BRANCH_NAME` 为 main 或 master，并且 `DEPLOY_TO` 为 master 或 main 时才会执行 `Example Deploy`
+
 ```
 pipeline {
   agent any
@@ -1257,14 +1276,22 @@ pipeline {
 }
 ```
 
-默认情况下，如果定义了某个 stage 的 agent，在进入该 stage 的 agent 后，该 stage 的 when 条件才会被评估，但是可以通过一些选项更改此选项。比如在进入 stage 的 agent 前评估 when， 可以使用 beforeAgent，当 when 为 true 时才进行该 stage
+默认情况下，如果定义了某个 stage 的 agent，在进入该 stage 的 agent 后，
+该 stage 的 when 条件才会被评估，但是可以通过一些选项更改此选项。
 
-目前支持的前置条件如下
-beforeAgent：如果 beforeAgent 为 true，则会先评估 when 条件。在 when 条件为 true 时，才会进入该 stage
-beforeInput：如果 beforeInput 为 true，则会先评估 when 条件。在 when 条件为 true 时，才会进入到 input 阶段；
-beforeOptions：如果 beforeInput 为 true，则会先评估 when 条件。在 when 条件为 true 时，才会进入到 options 阶段；
-beforeOptions 优先级大于beforeInput大于beforeAgent
+比如在进入 stage 的 agent 前评估 when， 可以使用 beforeAgent，
+当 when 为 true 时才进行该 stage
+
+**目前支持的前置条件如下**
+
+- **beforeAgent**：如果 beforeAgent 为 true，则会先评估 when 条件。在 when 条件为 true 时，才会进入该 stage
+- **beforeInput**：如果 beforeInput 为 true，则会先评估 when 条件。在 when 条件为 true 时，才会进入到 input 阶段；
+- **beforeOptions**：如果 beforeInput 为 true，则会先评估 when 条件。在 when 条件为 true 时，才会进入到 options 阶段；
+
+`beforeOptions` 优先级大于 `beforeInput` 大于 `beforeAgent`
+
 示例
+
 ```
 pipeline {
   agent none
@@ -1287,8 +1314,10 @@ pipeline {
 }
 ```
 
-Parallel
-在声明式流水线中可以使用 Parallel 字段，即可很方便的实现并发构建，比如对分支 A、B、 C 进行并行处理
+#### Parallel 并发构建
+
+在声明式流水线中可以使用 Parallel 字段，即可很方便的实现并发构建，比如对分支 `A、B、C` 进行并行处理
+
 ```
 pipeline {
   agent any
@@ -1333,7 +1362,8 @@ pipeline {
 
 ### Jenkinsfile 的使用
 
-上面讲过流水线支持两种语法，即声明式和脚本式，这两种语法都支持构建持续交付流水线。并且都可以用来在 Web UI 或 Jenkinsfile 中定义流水线，不过通常将 Jenkinsfile 放置于代码仓库中（当然也可以放在单独的代码仓库中进行管理）。
+上面讲过流水线支持两种语法，即声明式和脚本式，这两种语法都支持构建持续交付流水线。
+并且都可以用来在 `Web UI` 或 `Jenkinsfile` 中定义流水线，不过通常将 `Jenkinsfile` 放置于代码仓库中（当然也可以放在单独的代码仓库中进行管理）。
 
 创建一个 Jenkinsfile 并将其放置于代码仓库中，有以下好处
 
@@ -1347,16 +1377,16 @@ pipeline {
 
 Jenkins 有许多内置变量可以直接在 Jenkinsfile 中使用，可以通过 `JENKINS_URL/pipeline/syntax/globals#env` 获取完整列表。
 
-目前比较常用的环境变量如下
+**目前比较常用的环境变量如下**
 
-BUILD_ID：当前构建的 ID，与 Jenkins 版本 1.597+中的 BUILD_NUMBER 完全相同
-BUILD_NUMBER：当前构建的 ID，和 BUILD_ID 一致
-BUILD_TAG：用来标识构建的版本号，格式为：jenkins-{BUILD_NUMBER}， 可以对产物进行命名，比如生产的 jar 包名字、镜像的 TAG 等；
-BUILD_URL：本次构建的完整 URL，比如：http://buildserver/jenkins/job/MyJobName/17/%EF%BC%9B
-JOB_NAME：本次构建的项目名称
-NODE_NAME：当前构建节点的名称；
-JENKINS_URL：Jenkins 完整的 URL，需要在 SystemConfiguration 设置；
-WORKSPACE：执行构建的工作目录。
+- **BUILD_ID**：当前构建的 ID，与 Jenkins 版本 1.597+ 中的 BUILD_NUMBER 完全相同
+- **BUILD_NUMBER**：当前构建的 ID，和 BUILD_ID 一致
+- **BUILD_TAG**：用来标识构建的版本号，格式为：jenkins-{BUILD_NUMBER}， 可以对产物进行命名，比如生产的 jar 包名字、镜像的 TAG 等；
+- **BUILD_URL**：本次构建的完整 URL，比如：`http://buildserver/jenkins/job/MyJobName/17/%EF%BC%9B`
+- **JOB_NAME**：本次构建的项目名称
+- **NODE_NAME**：当前构建节点的名称；
+- **JENKINS_URL**：Jenkins 完整的 URL，需要在 `SystemConfiguration` 设置；
+- **WORKSPACE**：执行构建的工作目录。
 
 示例如果一个流水线名称为 `print_env`，第 2 次构建，各个变量的值。
 
@@ -1404,8 +1434,8 @@ pipeline {
 
 动态变量是根据某个指令的结果进行动态赋值，变量的值根据指令的执行结果而不同。如下所示
 
-returnStdout：将命令的执行结果赋值给变量，比如下述的命令返回的是 clang，此时 CC 的值为“clang”。
-returnStatus：将命令的执行状态赋值给变量，比如下述命令的执行状态为 1，此时 EXIT_STATUS 的值为 1。
+- **returnStdout**：将命令的执行结果赋值给变量，比如下述的命令返回的是 clang，此时 CC 的值为“clang”。
+- **returnStatus**：将命令的执行状态赋值给变量，比如下述命令的执行状态为 1，此时 `EXIT_STATUS` 的值为 1。
 
 ```
 //Jenkinsfile (Declarative Pipeline)
@@ -1438,11 +1468,15 @@ pipeline {
 
 #### 凭证管理
 
-Jenkins 的声明式流水线语法有一个 credentials()函数，它支持 secret text（加密文本）、username 和 password（用户名和密码）以及 secret file（加密文件）等。接下来看一下一些常用的凭证处理方法。
+Jenkins 的声明式流水线语法有一个 `credentials()`函数，它支持 `secret text（加密文本）`、`username` 和 `password（用户名和密码）`以及 `secret file（加密文件）`等。
+
+接下来看一下一些常用的凭证处理方法。
 
 1.加密文本
 
-本实例演示将两个 Secret 文本凭证分配给单独的环境变量来访问 Amazon Web 服务，需要 提前创建这两个文件的 credentials（实践的章节会有演示），Jenkinsfile 文件的内容如下
+本实例演示将两个 Secret 文本凭证分配给单独的环境变量来访问 `Amazon Web` 服务，需要提前创建这两个文件的 `credentials（实践的章节会有演示）`，
+`Jenkinsfile` 文件的内容如下
+
 ```
 //Jenkinsfile (Declarative Pipeline)
 pipeline {
@@ -1468,7 +1502,9 @@ pipeline {
 
 2.用户名密码
 
-本示例用来演示 credentials 账号密码的使用，比如使用一个公用账户访问 Bitbucket、GitLab、 Harbor 等。假设已经配置完成了用户名密码形式的 credentials，凭证 ID 为 harbor-account
+本示例用来演示 credentials 账号密码的使用，比如使用一个公用账户访问 `Bitbucket`、`GitLab`、 `Harbor` 等。
+
+假设已经配置完成了用户名密码形式的 credentials，凭证 ID 为 `harbor-account`
 
 ```
 //Jenkinsfile (Declarative Pipeline)
@@ -1486,15 +1522,15 @@ pipeline {
 }
 ```
 
-上述的配置会自动生成 3 个环境变量
+**上述的配置会自动生成 3 个环境变量**
 
-BITBUCKET_COMMON_CREDS：包含一个以冒号分隔的用户名和密码，格式为 username:password
-BITBUCKET_COMMON_CREDS_USR：仅包含用户名的附加变量
-BITBUCKET_COMMON_CREDS_PSW：仅包含密码的附加变量。
+- **BITBUCKET_COMMON_CREDS**：包含一个以冒号分隔的用户名和密码，格式为 `username:password`
+- **BITBUCKET_COMMON_CREDS_USR**：仅包含用户名的附加变量
+- **BITBUCKET_COMMON_CREDS_PSW**：仅包含密码的附加变量。
 
 3.加密文件
 
-需要加密保存的文件，也可以使用 credential，比如链接到 Kubernetes 集群的 kubeconfig 文件等。
+需要加密保存的文件，也可以使用 credential，比如链接到 Kubernetes 集群的 `kubeconfig` 文件等。
 
 假如已经配置好了一个 kubeconfig 文件，此时可以在 Pipeline 中引用该文件
 
@@ -1542,6 +1578,7 @@ spec:
   }
 }
 ```
+
 - 介绍内容来源：u.kubeinfo.cn/ozoxB
 
 
