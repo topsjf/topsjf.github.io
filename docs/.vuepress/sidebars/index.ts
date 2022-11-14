@@ -1,13 +1,38 @@
-export * from "./allSources.ts";
-export * from "./about.ts";
-export * from "./books.ts";
-export * from "./architectures.ts";
-export * from "./open-source.ts";
-export * from "./tools.ts";
-export * from "./java.ts";
-export * from "./database.ts";
-export * from "./web.ts";
-export * from "./middleware.ts";
-export * from "./kubernetesJson.ts";
-export * from "./dockerJson.ts";
-export * from "./linux.ts";
+import {sidebar} from "vuepress-theme-hope";
+
+import {allSources} from "./allSources.ts";
+import {about} from "./about.ts";
+import {books} from "./books.ts";
+import {architectures} from "./architectures.ts";
+import {openSources} from "./open-source.ts";
+import {toolsJson} from "./tools.ts";
+import {javaJson} from "./java.ts";
+import {databaseJson} from "./database.ts";
+import {webJson} from "./web.ts";
+import {middlewareJson} from "./middleware.ts";
+import {kubernetesJson} from "./kubernetesJson.ts";
+import {dockerJson} from "./dockerJson.ts";
+import {linuxJson} from "./linux.ts";
+
+
+/**
+ * 应该把更精确的路径放置在前边
+ */
+export const sidebarConfig = sidebar({
+    "/history/": ["history"],
+    "/about/": about,
+    "/architecture/": architectures,
+    "/books/": books,
+    "/open-source/": openSources,
+    "/all/": allSources,
+    "/": [
+        javaJson,
+        databaseJson,
+        webJson,
+        middlewareJson,
+        linuxJson,
+        kubernetesJson,
+        dockerJson,
+        toolsJson
+    ],
+});

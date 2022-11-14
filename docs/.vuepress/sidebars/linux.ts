@@ -1,4 +1,4 @@
-import {linuxBasis} from "./linux-basis";
+import {linuxBasis} from "./linux-basis.ts";
 
 /**
  * Linux 侧边栏json数据
