@@ -106,9 +106,11 @@ export default hopeTheme({
             katex: true,
             mark: true,
             mermaid: true,
+            //交互演示
             playground: {
                 presets: ["ts", "vue"],
             },
+            //幻灯片
             presentation: {
                 plugins: ["highlight", "math", "search", "notes", "zoom"],
             },
@@ -254,8 +256,8 @@ export default hopeTheme({
             description: "时间线文章列表",
           },
           {
-            name: "个人介绍",
-            short_name: "个人介绍",
+            name: "网站介绍",
+            short_name: "网站介绍",
             icons: [
               {
                 src: "/assets/icon/about-maskable.png",
@@ -270,8 +272,8 @@ export default hopeTheme({
                 type: "image/png",
               },
             ],
-            url: "/about/",
-            description: "个人介绍",
+            url: "/about/about-this",
+            description: "网站介绍",
           },
         ],
       },
