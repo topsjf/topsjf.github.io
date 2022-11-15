@@ -33,7 +33,7 @@
 
 1、创建文件 `./docs/java/demo.md`
 
-2、添加侧边栏路由 `.vuepress/sidebar.ts` 或 `.vuepress/sidebars/java.ts`
+2、添加侧边栏路由 `.vuepress/sidebars/{index.ts,java.ts}`
 
 ```json
 {
@@ -47,7 +47,7 @@
 }
 ```
 
-自动读取并配置路由
+自动读取md文件并配置侧边栏目录
 
 > children: "structure",
 
