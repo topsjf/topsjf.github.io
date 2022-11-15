@@ -118,7 +118,7 @@ npm config set registry https://registry.npm.taobao.org
 
 ```shell
 corepack enable
-corepack prepare pnpm@7.14.2 --activate
+corepack prepare pnpm@7.15.0 --activate
 ```
 卸载：corepack disable pnpm
 

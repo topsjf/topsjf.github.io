@@ -32,12 +32,15 @@ jobs:
           node-version: 16
           cache: pnpm
 
+      - name: 安装 Deps
+        run: pnpm install --frozen-lockfile
+
 
       - name: 构建文档
         env:
           NODE_OPTIONS: --max_old_space_size=8192
         run: |-
-          pnpm run docs:build
+          pnpm run build:vite
           > docs/.vuepress/dist/.nojekyll
 
       - name: 部署文档
