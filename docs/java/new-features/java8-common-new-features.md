@@ -1,3 +1,11 @@
+---
+icon: edit
+title: Java8 新特性实战
+category: Java
+tag:
+  - Java新特性
+---
+
 # Java8 新特性实战
 
 > 本文来自[cowbi](https://github.com/cowbi)的投稿~
