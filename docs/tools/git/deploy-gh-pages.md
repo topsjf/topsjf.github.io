@@ -255,13 +255,6 @@ jobs:
 
 `npm-shrinkwrap.json` 级别大于 `package-lock.json` 大于 `yarn.lock`
 
-pnpm-workspace.yaml
-
-```yaml
-packages:
-  - docs/*
-```
-
 
 ## 配置Pages
 
