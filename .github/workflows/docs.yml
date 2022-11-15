@@ -1,5 +1,5 @@
 
-name: 部署文档 dev
+name: 部署文档
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
         with:
           # repository-name: topsjf/v2
           # 这是文档部署到的分支名称
-          branch: page-dev
+          branch: page-main
           folder: docs/.vuepress/dist
           token: ${{ secrets.ACCESS_TOKEN }}
           single-commit: true
