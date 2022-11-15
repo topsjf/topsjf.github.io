@@ -132,7 +132,7 @@ name: 部署文档
 
 on:
   push:
-    //tags:
+    #tags:
     branches:
       - main
     paths-ignore:
