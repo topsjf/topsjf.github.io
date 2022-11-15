@@ -12,13 +12,19 @@ export default hopeTheme({
         url: "/article",
     },
     
-    repo: "https://github.com/topsjf/topsjf.github.io",
-    
     darkmode: "toggle",/*toggle,auto*/
     
+    //仓库
+    repo: "https://github.com/topsjf/topsjf.github.io",
+    
+    //文档在仓库中的目录
     docsDir: "docs",
     
+    //文档存放分支
+    docsBranch: "main",
+    
     iconAssets: "iconfont",
+    iconPrefix: "iconfont icon-",
     
     pure: false,
     
