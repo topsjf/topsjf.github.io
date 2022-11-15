@@ -82,7 +82,7 @@ added 595 packages in 22s
 
 - `JamesIves/github-pages-deploy-action` 作者的
 
-- - 示例1：npm模式（[docs-v1.yml](https://github.com/notejf/notejf.github.io/blob/main/.github/workflows/docs-v1.yml.old)）
+- - 示例1：npm模式（[docs-v1.yml](https://github.com/topsjf/topsjf.github.io/blob/main/.github/workflows/docs-v1.yml.old)）
 
 ```yaml
 name: 部署文档（v1）
@@ -125,25 +125,31 @@ jobs:
 
 ```
 
-- - 示例2：pnpm模式（[docs.yml](https://github.com/notejf/notejf.github.io/blob/main/.github/workflows/docs.yml)）
+- - 示例2：pnpm模式（[docs.yml](https://github.com/topsjf/topsjf.github.io/blob/main/.github/workflows/docs.yml)）
 
 ```yaml
-name: 部署文档（main）
+name: 部署文档
 
 on:
   push:
+    //tags:
     branches:
       - main
+    paths-ignore:
+      - img/**
+      - README.md
+      - LICENSE
 
 jobs:
   deploy-gh-pages:
-    name: 部署文档到 main-page
     runs-on: ubuntu-latest
     steps:
-      - name: 签出源码
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          # 如果你文档需要 Git 子模块，取消注释下一行
+          # submodules: true
 
       - name: 安装 pnpm
         uses: pnpm/action-setup@v2
@@ -157,30 +163,34 @@ jobs:
           node-version: 16
           cache: pnpm
 
-      - name: 查看版本&下载依赖
-        run: node -v && pnpm -v && pnpm install
+      - name: 安装 Deps
+        run: pnpm install --frozen-lockfile
 
-      - name: 打包
+      - name: 构建文档
         env:
-          # BASE: /main/
-          # HOSTNAME: https://notejf.github.io/
+          # BASE: /v2/
+          # HOSTNAME: https://topsjf.github.io/
           NODE_OPTIONS: --max_old_space_size=8192
-        run: pnpm run docs:build
+        run: |-
+          pnpm run build:vite
+          > docs/.vuepress/dist/.nojekyll
 
-      - name: 部署
+      - name: 部署文档
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          # repository-name: notejf/main
-          branch: main-page
-          folder: dist
+          # repository-name: topsjf/v2
+          # 这是文档部署到的分支名称
+          branch: page-dev
+          folder: docs/.vuepress/dist
           token: ${{ secrets.ACCESS_TOKEN }}
           single-commit: true
+
 
 ```
 安装 pnpm 步骤可以替换为：
 ```yaml
       - name: 安装 pnpm
-        run: corepack enable && corepack prepare pnpm@7.13.6 --activate
+        run: corepack enable && corepack prepare pnpm@7.15.0 --activate
 ```
 
 -------------
