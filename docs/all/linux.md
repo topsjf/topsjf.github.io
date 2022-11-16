@@ -41,20 +41,20 @@ tag:
 
 ### centos6和7怎么将源码安装的程序添加到开机自启动？
 
-通用方法：编辑/etc/rc.d/rc.local文件，在文件末尾添加启动服务命令
+通用方法：编辑`/etc/rc.d/rc.local`文件，在文件末尾添加启动服务命令
 
 *centos6*
 
 - ① 进入到/etc/rc.d/init.d目录下；
 - ② 新建一个服务启动脚本，脚本中指定chkconfig参数；
 - ③ 添加执行权限；
-- ④ 执行chkconfig --add 添加服务自启动；
+- ④ 执行`chkconfig --add` 添加服务自启动；
 
 *centos7*
 
-- ① 进入到/usr/lib/systemd/system目录下；
-- ② 新建自定义服务文件，文件中包含[Unit] [Service] [Install]相关配置，然后添加下执行权限；
-- ③ 执行systemctl enable 服务名称；
+- ① 进入到`/usr/lib/systemd/system`目录下；
+- ② 新建自定义服务文件，文件中包含`[Unit]`、`[Service]`、`[Install]`相关配置，然后添加下执行权限；
+- ③ 执行 `systemctl enable` 服务名称；
 
 ### 简述lvm，如何给使用lvm的/分区扩容？
 
@@ -164,7 +164,7 @@ find /var/log/ -type f -name .*.log -mtime 30|xargs rm -f
 
 ### ansible有哪些模块？功能是什么？
 
-[Ansible 模块实例](/linux/ansible/ansible)
+[Ansible 模块实例](/linux/ansible/ansible.html)
 
 
 | 模块       | 功能                   |
@@ -190,7 +190,9 @@ find /var/log/ -type f -name .*.log -mtime 30|xargs rm -f
 
 ### 四层负载和七层负载区别是什么？
 
-四层基于IP+端口进行转发七层就是基于URL等应用层信息的负载均衡
+四层基于IP+端口进行转发
+
+七层就是基于URL等应用层信息的负载均衡
 
 ### lvs有哪些工作模式？哪个性能高？
 
@@ -205,8 +207,15 @@ find /var/log/ -type f -name .*.log -mtime 30|xargs rm -f
 
 ### tomcat各个目录含义，如何修改端口，如何修改内存数？
 
-bin 存放tomcat命令conf 存放tomcat配置文件lib 存放tomcat运行需要加载的jar包log 存在Tomcat运行产生的日志temp 
-运行过程中产生的临时文件webapps 站点目录work存放tomcat运行时的编译后的文件 conf/server.xml 修改端口号 bin/catalina.sh 修改jvm内存
+- bin 存放tomcat命令
+- conf 存放tomcat配置文件
+- lib 存放tomcat运行需要加载的jar包
+- log 存放Tomcat运行产生的日志
+- temp 运行过程中产生的临时文件
+- webapps 站点目录
+- work 存放tomcat运行时的编译后的文件 
+- conf/server.xml 修改端口号 
+- bin/catalina.sh 修改jvm内存
 
 ### nginx反向代理时，如何使后端获取真正的访问来源ip？
 
@@ -254,7 +263,8 @@ curl --tlsv1 'https://www.bitstamp.net/api/v2/transactions/btcusd/'
 
 ### 索引的为什么使查询加快？有啥缺点？
 
-默认的方式是根据搜索条件进行全表扫描，遇到匹配条件的就加入搜索结果集合。如果我们对某一字段增加索引，查询时就会先去索引列表中一次
+默认的方式是根据搜索条件进行全表扫描，遇到匹配条件的就加入搜索结果集合。
+如果我们对某一字段增加索引，查询时就会先去索引列表中一次
 定位到特定值的行数，大大减少遍历匹配的行数，所以能明显增加查询的速度
 
 **缺点：**
@@ -331,21 +341,20 @@ BINLOG记录数据库的变更过程。例如创建数据库、建表、修改�
 
 **myisam、innodb 区别**
 
-- （1）InnoDB 支持事务，MyISAM 不支持，这一点是非常之重要。事务是一种高级的处理方式，如在一些列增删改中只要哪个出错还可以回滚还原，而 MyISAM就不可以了；
-- （2）MyISAM 适合查询以及插入为主的应用，InnoDB 适合频繁修改以及涉及到安全性较高的应用；
-- （3）InnoDB 支持外键，MyISAM 不支持；
-- （4）MyISAM 是默认引擎，InnoDB 需要指定；
-- （5）InnoDB 不支持 FULLTEXT 类型的索引；
-- （6）InnoDB 中不保存表的行数，如 select count() from table 时，InnoDB；需要扫描一遍整个表来计算有多少行，但是 MyISAM 只要简单的读出保存好的行数即可。注意的是，当 count()语句包含 where 条件时 MyISAM 也需要扫描整个表；
-- （7）对于自增长的字段，InnoDB 中必须包含只有该字段的索引，但是在 MyISAM表中可以和其他字段一起建立联合索引；
-- （8）清空整个表时，InnoDB 是一行一行的删除，效率非常慢。MyISAM 则会重建表；
-- （9）InnoDB 支持行锁（某些情况下还是锁整表，如 update table set a=1 where user like ‘%lee%’
+- InnoDB：支持事务、外键、行锁，是聚族索引，不存储表的行数，
+如 `select count() from table` 时，InnoDB 需要扫描一遍整个表来计算有多少行，
+但是 MyISAM 只要简单的读出保存好的行数即可；
+注意的是，当 `count()` 语句包含 where 条件时 MyISAM 也需要扫描整个表；
+适合频繁修改以及涉及到安全性较高的应用。
+- MylSAM：不支持事务、外键；支持行锁，是非聚族索引，存储表的行数。适合查询以及插入为主的应用。
+- 清空整个表时，InnoDB 是一行一行的删除，效率非常慢。MyISAM 则会重建表。
+- InnoDB 支持行锁（某些情况下还是锁整表，如 `update table set a=1 where user like ‘%lee%’`。
 
 ### 如何查询mysql数据库存放路径？
 
 myisam
 
-- .frm文件：保护表的定义
+- .frm：保护表的定义
 - .myd：保存表的数据
 - .myi：表的索引文件
 
@@ -353,7 +362,7 @@ myisam
 
 **myisam**
 
-- .frm文件：保护表的定义
+- .frm：保护表的定义
 - .myd：保存表的数据 
 - .myi：表的索引文件
 
@@ -366,14 +375,14 @@ myisam
 
 **mysql8之前**
 
-- set password for 用户名@localhost = password('新密码'); 
-- mysqladmin -u用户名 -p旧密码 password 新密码
-- update user set password=password('123') where user='root' and host='localhost';
+- `set password for 用户名@localhost = password('新密码'); `
+- `mysqladmin -u用户名 -p旧密码 password 新密码`
+- `update user set password=password('123') where user='root' and host='localhost';`
 
 **mysql8之后**
 
 - mysql8初始对密码要求高，简单的字符串不让改。先改成:MyNewPass@123;
-- alter user 'root'@'localhost' identified by 'MyNewPass@123';
+- `alter user 'root'@'localhost' identified by 'MyNewPass@123';`
 
 *降低密码难度*
 
@@ -435,9 +444,9 @@ redis 127.0.0.1:6379> CONFIG GET dir
 
 ### MongoDB如何进行数据备份？
 
-mongoexport / mongoimport
+`mongoexport / mongoimport`
 
-mongodump / mongorestore
+`mongodump / mongorestore`
 
 ### kafka为何比redis rabbitmq快？
 
@@ -484,7 +493,9 @@ mongodump / mongorestore
 ```shell
 vim /lib/systemd/system/docker.service
 ```
+
 在ExecStart=后添加配置，注意，需要先空格后，再输入 
+
 ```shell
 -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock
 ```
@@ -495,19 +506,19 @@ vim /lib/systemd/system/docker.service
 - cgroup：资源控制
 - 联合文件系统：支持对文件系统的修改作为一次提交来一层层的叠加，同时可以将不同目录挂载到同一个虚拟文件系统下
 
-### 9. 命令相关：导入导出镜像，进入容器，设置重启容器策略，查看镜像环境变量，查看容器占用资源
+### 导入导出镜像，进入容器，设置重启容器策略，查看镜像环境变量，查看容器占用资源
 
-- 导入镜像 docker load -i xx.tar
-- 导出镜像 docker save -o xx.tar image_name
-- 进入容器 docker exec -it 容器ID /bin/bash
-- 设置容器重启策略启动时 `--restart`选项
-- 查看容器环境变量 docker exec {containerID} env
-- 查看容器资源占用 docker stats test2
+- 导入镜像 `docker load -i xx.tar`
+- 导出镜像 `docker save -o xx.tar image_name`
+- 进入容器 `docker exec -it 容器ID /bin/bash`
+- 设置容器重启策略启动时 `--restart` 选项
+- 查看容器环境变量 `docker exec {containerID} env`
+- 查看容器资源占用 `docker stats test2`
 
 ### 构建镜像有哪些方式？
 
-- dockerfile：docker build -f 文件
-- 容器提交为镜像： docker commit -m "" -a "" 容器ID 镜像名称:版本
+- dockerfile：`docker build -f 文件`
+- 容器提交为镜像： `docker commit -m "" -a "" 容器ID 镜像名称:版本`
 
 ### docker和vmware虚拟化区别？
 
@@ -607,12 +618,12 @@ Pod的重启策略有3种，默认值为Always。
 
 - ExecAction：在容器中执行一个命令，并根据其返回的状态码进行诊断的操作称为Exec探测，状态码为0表示成功，否则即为不健康状态。
 - TCPSocketAction：通过与容器的某TCP端口尝试建立连接进行诊断，端口能够成功打开即为正常，否则为不健康状态。
-- HTTPGetAction：通过向容器IP地址的某指定端口的指定path发起HTTP GET请求进行诊断，响应码为2xx或3xx时即为成功，否则为失败
+- HTTPGetAction：通过向容器IP地址的某指定端口的指定path发起HTTP GET请求进行诊断，响应码为2xx或3xx时即为成功，否则为失败。
 
 ### requests和limits用途是什么？
 
-- `requests` 属性定义其请求的确保可用值，即容器运行可能用不到这些额度的资源，但用到时必须要确保有如此多的资源可用
-- `limits` 属性则用于限制资源可用的最大值，即硬限制
+- `requests` 属性定义其请求的确保可用值，即容器运行可能用不到这些额度的资源，但用到时必须要确保有如此多的资源可用。
+- `limits` 属性则用于限制资源可用的最大值，即硬限制。
 
 ### kubeconfig文件包含什么内容，用途是什么？
 
@@ -620,24 +631,24 @@ Pod的重启策略有3种，默认值为Always。
 
 ### RBAC中role和clusterrole区别，rolebinding和 clusterrolebinding区别？
 
-- Role 可以定义在一个 namespace 中，如果想要跨 namespace 则可以创建 ClusterRole，ClusterRole 具有与 Role相同的
-权限角色控制能力，不同的是 ClusterRole 是集群级别的
+- Role 可以定义在一个 namespace 中，如果想要跨 namespace 则可以创建 `ClusterRole`，`ClusterRole` 具有与 `Role` 相同的
+权限角色控制能力，不同的是 `ClusterRole` 是集群级别的。
 
-- RoleBinding 适用于某个命名空间内授权，而 ClusterRoleBinding 适用于集群范围内的授权
+- RoleBinding 适用于某个命名空间内授权，而 `ClusterRoleBinding` 适用于集群范围内的授权。
 
 ### ipvs为啥比iptables效率高？
 
 - IPVS模式与iptables同样基于Netfilter，但是ipvs采用的hash表，iptables采用一条条的规则列表。 
 - iptables又是为了防火墙设计的，集群数量越多iptables规则就越多，而iptables规则是从上到下匹配，所以效率就越是低下。
-- 因此当service数量达到一定规模时，hash查表的速度优势就会显现出来，从而提高service的服务性能
+- 因此当service数量达到一定规模时，hash查表的速度优势就会显现出来，从而提高service的服务性能。
 
 ### sc pv pvc用途，容器挂载存储整个流程是什么？
 
 - PVC：Pod 想要使用的持久化存储的属性，比如存储的大小、读写权限等。
 - PV ：具体的 Volume 的属性， 比如 Volume 的类型、挂载目录、远程存储服务器地址等。
 - StorageClass：充当 PV 的模板。并且，只有同属于一个 StorageClass 的 PV 和 PVC，才可以绑定在一起。当然，
-StorageClass 的另一个重要作用，是指定 PV 的 Provisioner（存储插件）。这时候，如果你的存储插件支持 
-Dynamic Provisioning 的话，Kubernetes 就可以自动为你创建 PV 了。
+StorageClass 的另一个重要作用，是指定 PV 的 Provisioner（存储插件）。
+这时候，如果你的存储插件支持 `Dynamic Provisioning` 的话，Kubernetes 就可以自动为你创建 PV 了。
 
 ![](./linux.assets/true-image-20220817182601302.png)
 
@@ -645,8 +656,8 @@ Dynamic Provisioning 的话，Kubernetes 就可以自动为你创建 PV 了。
 
 - ngress controller通过和kubernetes api交互，动态的去感知集群中ingress规则变化，
 - 然后读取它，按照自定义的规则，规则就是写明了哪个域名对应哪个service， 
-- 生成一段nginx配置，再写到nginx-ingress-controller的pod里，这个Ingress controller的pod里运行着一个Nginx服务，
-控制器会把生成的nginx配置写入/etc/nginx.conf文件中，然后reload 一下使配置生效。以此达到域名分配置和动态更新的问题。
+- 生成一段nginx配置，再写到`nginx-ingress-controller`的pod里，这个Ingress controller的pod里运行着一个Nginx服务，
+控制器会把生成的nginx配置写入`/etc/nginx.conf`文件中，然后reload 一下使配置生效。以此达到域名分配置和动态更新的问题。
 
 ### 描述不同node上的Pod之间的通信流程
 
@@ -656,17 +667,17 @@ Dynamic Provisioning 的话，Kubernetes 就可以自动为你创建 PV 了。
 
 ### k8s集群节点需要关机维护，需要怎么操作
 
-- 进行pod驱逐：kubelet drain <node_name>
+- 进行pod驱逐：`kubelet drain <node_name>`
 - 检查node上是否无pod运行，切被驱逐的pod已经在其他节点运行正常
 - 关机维护
 - 开机启动相关服务（注意启动顺序）
-- 解除node节点不可调度：kubectl uncordon node
+- 解除node节点不可调度：`kubectl uncordon node`
 - 创建测试pod，并使用节点标签测试节点可以被正常调度
 
 ### canal和flannel区别
 
-- Flannel（简单、使用居多）：基于Vxlan技术（叠加网络+二层隧道），不支持网络策略
-- Calico（较复杂，使用率少于Flannel）： 也可以支持隧道网络，但是是三层隧道（IPIP），支持网络策略
+- Flannel（简单、使用居多）：基于Vxlan技术（叠加网络+二层隧道），不支持网络策略。
+- Calico（较复杂，使用率少于Flannel）： 也可以支持隧道网络，但是是三层隧道（IPIP），支持网络策略。
 - Calico项目既能够独立地为Kubernetes集群提供网络解决方案和网络策略，
 也能与flannel结合在一起，由flannel提供网络解决方案，而Calico此时仅用于提供网络策略。
 
