@@ -12,11 +12,11 @@ tag:
 
 ### 网络4-5-7模型
 
-![](./network.assets/tcp3.png)
+![](./network.assets/true-tcp3.png)
 
 ![](./network.assets/tcp5.webp)
 
-![](./network.assets/tcp4.png)
+![](./network.assets/true-tcp4.png)
 
 
 ## TCP
@@ -25,7 +25,7 @@ TCP 在传输之前会进行三次沟通，一般称为“三次握手”，传�
 
 ### 三次握手
 
-![](./network.assets/tcp1.png)
+![](./network.assets/true-tcp1.png)
 
 - 客户端–发送带有 SYN 标志的数据包–⼀次握⼿–服务端
 - 服务端–发送带有 SYN/ACK 标志的数据包–⼆次握⼿–客户端
@@ -38,7 +38,7 @@ TCP 在传输之前会进行三次沟通，一般称为“三次握手”，传�
 
 ### 四次挥手
 
-![](./network.assets/tcp2.png)
+![](./network.assets/true-tcp2.png)
 
 - 客户端-发送⼀个 FIN，⽤来关闭客户端到服务器的数据传送。
 - 服务器-收到这个 FIN，它发回⼀个 ACK，确认序号为收到的序号加1，和 SYN ⼀样，⼀个 FIN 将占⽤⼀个序号
@@ -78,7 +78,7 @@ MAC 地址处于`数据链路层`，IP 地址处于`网络层`，端口号处于
 
 例如 MS 和 IBM，阿里这样公司的网络。
 
-![](./network.assets/tcp6.jpeg)
+![](./network.assets/true-tcp6.jpeg)
 
 
 ### B 类 IP 地址
