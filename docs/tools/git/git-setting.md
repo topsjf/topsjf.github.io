@@ -42,9 +42,12 @@ git config --global --replace-all user.email "jinfang"
 **创建公钥-私钥**
 
 ```bash
-ssh-keygen -t rsa -b 4096 -C "iskong9@163.com"    # 按3次回车，创建ssh免密
+ssh-keygen -t rsa -b 4096 -C "topjfk@163.com"    
+# 按3次回车，创建ssh免密
+```
 
-# 添加私钥
+**添加私钥(可选)**
+```
 ssh-add ~/.ssh/id_rsa   
 eval `ssh-agent -s`
 ```
@@ -69,6 +72,7 @@ cat ~/.ssh/id_rsa
 
 ```bash
 ssh -T git@gitee.com
+
 ssh -T git@github.com
 ```
 
@@ -131,10 +135,10 @@ mkdir topsjf.github.io
 cd topsjf.github.io
 git init
 git add -A
-### 创建分支
-git branch -M main
 ### 提交本地代码
 git commit -m '提交代码了丫'
+### 创建分支
+git branch -M main
 
 ### https与远程仓库关联
 git remote add origin https://github.com/topsjf/topsjf.github.io.git
