@@ -25,5 +25,10 @@ projects:
     desc: 极速前进
     link: /home
 
+  - icon: link
+    name: 面试宝典
+    desc: 常见Java，Linux效果面试题
+    link: /all/all
+
 
 ---
