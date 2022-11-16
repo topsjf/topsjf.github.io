@@ -10,9 +10,6 @@ tag:
 
 ## git配置
 
-- [gitee ssh配置页](https://gitee.com/profile/sshkeys)
-- [github ssh配置页](https://github.com/settings/keys)
-
 **安装Git**
 
 ```bash
@@ -36,7 +33,7 @@ git config --global user.email "topjfk@163.com"
 如果有多个name值时执行：
 ```
 git config --global --replace-all user.name "jinfang"
-git config --global --replace-all user.email "jinfang"
+git config --global --replace-all user.email "topjfk@163.com"
 ```
 
 **创建公钥-私钥**
@@ -67,6 +64,9 @@ cat ~/.ssh/id_rsa
 
 把 id_rsa.pub 内容复制到：gitee --> 安全设置 --> SSH公钥 --> 添加公钥 --> 把id_rsa.pub内容粘贴进来。
 
+- [gitee ssh配置页](https://gitee.com/profile/sshkeys)
+- [github ssh配置页](https://github.com/settings/keys)
+
 
 **校验公钥应用是否生效**
 
@@ -81,6 +81,7 @@ ssh -T git@github.com
 ```bash
 PS C:\Users\k> ssh -T git@gitee.com
 Hi jin! You've successfully authenticated, but GITEE.COM does not provide shell access.'
+
 PS C:\Users\k> ssh -T git@github.com
 Hi top! You've successfully authenticated, but GitHub does not provide shell access.'
 ```
