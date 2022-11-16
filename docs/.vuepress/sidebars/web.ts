@@ -7,7 +7,7 @@ export const webJson =
  //       icon: "html",
   //      prefix: "web/",
 //        collapsable: true,
-        children: "structure",
+      //  children: "structure",
         //children: [
          [   "webpart",
             "web-vue",
