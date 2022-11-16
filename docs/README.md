@@ -3,6 +3,7 @@ home: true
 layout: Blog
 icon: home
 title: 首页
+bgImage: /heihei.gif
 heroImage: /heihei.gif
 heroText: topsjf
 heroFullScreen: false
