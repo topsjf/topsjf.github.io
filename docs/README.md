@@ -4,7 +4,7 @@ layout: Blog
 icon: home
 title: 首页
 bgImage: /heihei.gif
-heroImage: /heihei.gif
+#heroImage: /heihei.gif
 heroText: topsjf
 heroFullScreen: false
 tagline: 🍎13刘海变窄说明了什么？说明它脱发了，也变强了。
