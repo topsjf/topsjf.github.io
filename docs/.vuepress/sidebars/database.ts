@@ -2,12 +2,12 @@
  * Java 侧边栏json数据
  */
 export const databaseJson =
-    {
-        text: "数据库",
-        icon: "mysql",
-        prefix: "database/",
-        collapsable: true,
-        children: [
+    //{
+     //   text: "数据库",
+     //   icon: "mysql",
+     //   prefix: "database/",
+     //   collapsable: true,
+     //   children: [
             {
                 text: "MySQL",
                 icon: "mysql",
@@ -25,6 +25,6 @@ export const databaseJson =
                 prefix: "oracle/",
                 children: "structure",
             },
-        ],
-    }
+       // ],
+  //  }
 

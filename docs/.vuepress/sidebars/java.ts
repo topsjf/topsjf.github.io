@@ -2,13 +2,13 @@
  * Java 侧边栏json数据
  */
 export const javaJson =
-    {
-        text: "Java",
-        icon: "java",
-        prefix: "java/",
-        collapsable: true,
+   // {
+//        text: "Java",
+//        icon: "java",
+//        prefix: "java/",
+//        collapsable: true,
         //children: "structure",
-        children: [
+//        children: [
             {
                 text: "基础",
                 icon: "java",
@@ -65,5 +65,5 @@ export const javaJson =
                     "java16",
                 ],
             },
-        ],
-    }
+    //    ],
+  //  }
