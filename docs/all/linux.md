@@ -277,6 +277,25 @@ curl --tlsv1 'https://www.bitstamp.net/api/v2/transactions/btcusd/'
 
 ![](./linux.assets/true-image-sql-joins.png)
 
+**简单的连接查询**
+
+```sql
+# 2条数据(交集)
+SELECT a.id,b.id FROM a INNER JOIN b ON b.a_id=a.id
+# 4条数据
+SELECT a.id,b.id FROM a LEFT JOIN b ON b.a_id=a.id
+# 2条数据
+SELECT a.id,b.id FROM a RIGHT JOIN b ON b.a_id=a.id
+```
+
+**合并查询**
+
+```sql
+select * from emp where e_job='MANAGER'  
+union
+select * from emp where e_job='SALESMAN'
+```
+
 ### mysql数据备份方式，如何恢复？你们的备份策略是什么？
 
 **物理完全备份**
@@ -349,6 +368,16 @@ BINLOG记录数据库的变更过程。例如创建数据库、建表、修改�
 - MylSAM：不支持事务、外键；支持行锁，是非聚族索引，存储表的行数。适合查询以及插入为主的应用。
 - 清空整个表时，InnoDB 是一行一行的删除，效率非常慢。MyISAM 则会重建表。
 - InnoDB 支持行锁（某些情况下还是锁整表，如 `update table set a=1 where user like ‘%lee%’`。
+
+### 引发索引失效问题
+
+[https://blog.csdn.net/sy_white/article/details/122112440](https://blog.csdn.net/sy_white/article/details/122112440)
+
+- 查询条件中带有or,除非所有的查询条件都建有索引，否则索引失效。
+- like查询是以%开头。
+- 如果列类型是字符串，那在查询条件中需要将数据用引号引用起来，否则不走索引。
+- 索引列上参与计算会导致索引失效。
+- 违背最左匹配原则。
 
 ### 如何查询mysql数据库存放路径？
 
