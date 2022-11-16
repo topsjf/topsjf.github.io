@@ -1,7 +1,7 @@
 ---
-title: 网络相关面试题
+title: 网络相关
 icon: linux
-category: 面试
+category: 面试宝典
 date: 2022-11-16
 tag:
 - 网络

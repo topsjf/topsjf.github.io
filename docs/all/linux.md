@@ -1,7 +1,7 @@
 ---
 icon: linux
-title: 运维面试题总结
-category: 面试
+title: Linux运维相关
+category: 面试宝典
 date: 2022-08-17
 tag:
 
