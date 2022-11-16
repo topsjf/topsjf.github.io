@@ -8,7 +8,7 @@ export const databaseJson =
      //   prefix: "database/",
      //   collapsable: true,
      //   children: [
-            {
+      [      {
                 text: "MySQL",
                 icon: "mysql",
                 prefix: "mysql/",
@@ -24,7 +24,7 @@ export const databaseJson =
                 icon: "tool",
                 prefix: "oracle/",
                 children: "structure",
-            },
+            },]
        // ],
   //  }
 

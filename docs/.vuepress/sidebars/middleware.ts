@@ -8,7 +8,7 @@ export const middlewareJson =
    //     prefix: "middleware/",
    //     collapsable: true,
 //        children: [
-            {
+     [       {
                 text: "MQ中间件",
                 icon: "tool",
                 prefix: "mq/",
@@ -33,7 +33,7 @@ export const middlewareJson =
               //  ]
             },
             "elastic-search",
-
+]
    //     ],
  //   }
 

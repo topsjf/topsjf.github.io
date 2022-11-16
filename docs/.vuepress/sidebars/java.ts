@@ -9,7 +9,7 @@ export const javaJson =
 //        collapsable: true,
         //children: "structure",
 //        children: [
-            {
+     [       {
                 text: "基础",
                 icon: "java",
                 prefix: "basis/",
@@ -64,6 +64,6 @@ export const javaJson =
                     "java14-15",
                     "java16",
                 ],
-            },
+            },]
     //    ],
   //  }
