@@ -256,8 +256,8 @@ curl --tlsv1 'https://www.bitstamp.net/api/v2/transactions/btcusd/'
 ```
 
 - response头信息 ：curl -I
-- get：curl 请求地址?key1=value1&key2=value2&key3=value3
-- post：curl -d “key1=value1&key2=value2&key3=value3”
+- get：curl 请求地址`?key1=value1&key2=value2&key3=value3`
+- post：`curl -d “key1=value1&key2=value2&key3=value3”`
 
 ## 二、mysql
 
