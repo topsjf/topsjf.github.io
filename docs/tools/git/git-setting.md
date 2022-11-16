@@ -28,12 +28,16 @@ email#这里是邮箱
 
 ```bash
 git config --global user.name "jinfang"
-git config --global user.email "iskong9@163.com"
+git config --global user.email "topjfk@163.com"
 ```
 
-查看config配置消息：git config --list
+查看config配置消息：`git config --list`
 
-如果有多个name值时执行：git config --global --replace-all user.name "jinfang"
+如果有多个name值时执行：
+```
+git config --global --replace-all user.name "jinfang"
+git config --global --replace-all user.email "jinfang"
+```
 
 **创建公钥-私钥**
 
