@@ -32,7 +32,8 @@ export const sidebarConfig = sidebar({
     "/linux/": linuxJson,
     "/k8s/": kubernetesJson,
     "/docker/": dockerJson,
-    "/": [
-        toolsJson
-    ],
+    "/tools/": toolsJson,
+  //  "/": [
+        
+  //  ],
 });

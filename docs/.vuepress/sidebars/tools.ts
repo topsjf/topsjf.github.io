@@ -2,12 +2,12 @@
  * Java 侧边栏json数据
  */
 export const toolsJson =
-    {
-        text: "开发工具",
-        icon: "tool",
-        prefix: "tools/",
-        collapsable: true,
-        children: [
+  [//  {
+   //     text: "开发工具",
+   //     icon: "tool",
+   //     prefix: "tools/",
+    //    collapsable: true,
+   //     children: [
             "java",
             "maven",
             "gradle",
@@ -37,6 +37,6 @@ export const toolsJson =
                 //    "deploy-gh-pages"
                // ],
             }
-        ],
-    }
+        ]
+ //   }
 
