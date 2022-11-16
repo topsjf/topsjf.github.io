@@ -29,10 +29,10 @@ export const sidebarConfig = sidebar({
     "/web/": webJson,
     "/middleware/": middlewareJson,
     "/database/": databaseJson,
+    "/linux/": linuxJson,
+    "/k8s/": kubernetesJson,
+    "/docker/": dockerJson,
     "/": [
-        linuxJson,
-        kubernetesJson,
-        dockerJson,
         toolsJson
     ],
 });

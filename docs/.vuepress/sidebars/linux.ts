@@ -4,12 +4,12 @@ import {linuxBasis} from "./linux-basis.ts";
  * Linux 侧边栏json数据
  */
 export const linuxJson =
-    {
-        text: "Linux",
-        icon: "linux",
-        prefix: "linux/",
-        collapsable: true,
-        children: [
+   [// {
+     //   text: "Linux",
+    //    icon: "linux",
+     //   prefix: "linux/",
+     //   collapsable: true,
+     //   children: [
             {
                 text: "基础命令",
                 icon: "object",
@@ -46,4 +46,4 @@ export const linuxJson =
             },
             "shell",
         ],
-    }
+ //   }
