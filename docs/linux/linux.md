@@ -18,6 +18,7 @@ title: Linux
 - [Linux常用命令实例](./command-examples.md)
 - [Linux常见异常分析](./exception-analysis.md)
 - [网卡配置](./network-setting.md)
+- [磁盘相关](./disk.md)
 - [yum源配置](./yum-repo.md)
 - [升级内核](./update-kernel.md)
 - [Shell 编程](./shell.md)
