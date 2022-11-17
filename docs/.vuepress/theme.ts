@@ -100,6 +100,10 @@ export default hopeTheme({
             categoryId: "DIC_kwDOIZQJAs4CSb_Z",
         },
         
+        //其他插件
+        components: ["Badge","BiliBili","CodePen","PDF","StackBlitz","VideoPlayer","YouTube"],
+        
+        //md增强
         mdEnhance: {
             align: true,
             attrs: true,
