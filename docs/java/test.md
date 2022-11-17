@@ -37,6 +37,8 @@ console.log('你好，VuePress！')
 <PDF url="/java/pdf/date.pdf" :height="420" />
 ```
 
+<PDF url="https://topjfk.oss-cn-chengdu.aliyuncs.com/docker/01.为什么要学习.pdf" />
+
 ------
 
 
