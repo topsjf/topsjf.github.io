@@ -23,8 +23,8 @@
 - 依赖选择：
 
 ```
-++++++++vue++++++++vuepress++++++++++vuepress-theme-hope
-- -  (`3.2.44`)->(`2.0.0-beta.53`)->(`2.0.0-beta.122`) 
+++vue+++++++++vuepress+++++++++++vuepress-theme-hope
+(`3.2.41`)->(`2.0.0-beta.53`)->(`2.0.0-beta.121`) 
 
 ```
 
@@ -118,9 +118,9 @@ npm config set registry https://registry.npm.taobao.org
 
 ```shell
 corepack enable
-corepack prepare pnpm@7.15.0 --activate
+corepack prepare pnpm@7.16.1 --activate
 ```
-卸载：corepack disable pnpm
+卸载：`corepack disable pnpm`
 
 
 - 创建初始化项目： 
