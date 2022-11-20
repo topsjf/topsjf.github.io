@@ -114,7 +114,7 @@ etcd 是兼具一致性和高可用性的键值数据库，可以作为保存 Ku
 
 #### k8s<a name="k8s-alias"></a>
 
-[原文链接](https://blog.csdn.net/qq_42476834/article/details/117373828)
+[快捷键设置 原文链接](https://blog.csdn.net/qq_42476834/article/details/117373828)
 
 vim ~/.bashrc
 
@@ -243,7 +243,6 @@ alias dklogs='docker logs'
 
 ![](./basis.assets/true-image-20211212160128007.png)
 
-**具体设置&创建请参考：批量处理vagrant_vmware** 
 
 安装 net-tools 工具
 
@@ -282,7 +281,7 @@ yum install -y net-tools
 >
 > ping -c 3 master-120 && ping -c 3 node-121 && ping -c 3 node-122 && ping -c 3 node-123
 
-用户：a，密码：123456a，  hostnamectl set-hostname 
+用户：a，密码：123456a， 设置主机名称： hostnamectl set-hostname 
 
 #### 开启 ssh 远程登录<a name="ssh"></a>
 
@@ -299,7 +298,8 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@192.168.100.132 && \
 ssh-copy-id -i ~/.ssh/id_rsa.pub a@192.168.100.130 && \
 ssh-copy-id -i ~/.ssh/id_rsa.pub a@192.168.100.131 && \
 ssh-copy-id -i ~/.ssh/id_rsa.pub a@192.168.100.132
-免密登录
+
+免密登录测试
 ssh 192.168.100.130
 ssh 192.168.100.131
 ssh 192.168.100.132
@@ -434,19 +434,19 @@ yum list docker-ce.x86_64 --showduplicates | sort -r
   service docker start
 ```
 
-systemctl docker
+`systemctl docker`
 
-systemctl restart docker
+`systemctl restart docker`
 
-systemctl stop docker
+`systemctl stop docker`
 
-systemctl enable docker
+`systemctl enable docker`
 
-systemctl disable docker
+`systemctl disable docker`
 
-systemctl status docker
+`systemctl status docker`
 
-usermod -aG docker a #非root用户
+`usermod -aG docker a` #非root用户
 
 设置加速
 
@@ -526,18 +526,18 @@ yum list kubelet	yum list kube*
 
 `failure: repodata/repomd.xml from kubernetes: [Errno 256] No more mirrors to try.`
 
-暂时禁用存储库：yum --disablerepo=kubernetes
+暂时禁用存储库：`yum --disablerepo=kubernetes`
 
-永久禁用存储库：yum-config-manager --disable kubernetes or subscription-manager repos --disable=kubernetes
+永久禁用存储库：`yum-config-manager --disable kubernetes or subscription-manager repos --disable=kubernetes`
 
-如果不可用，则跳过：yum-config-manager --save --setopt=kubernetes.skip_if_unavailable=true
+如果不可用，则跳过：`yum-config-manager --save --setopt=kubernetes.skip_if_unavailable=true`
 
 #### 5、master 安装
 
 **升级0，新安装0，降级3，删除0，未升级25**
 
 ```ABAP
-apt-get install -y kubeadm=1.21.5-0 kubelet=1.21.5-0 kubectl=1.21.5-0
+apt-get install -y kubeadm=1.23.8-0 kubelet=1.23.8-0 kubectl=1.23.8-0
 
 yum install kubeadm-1.23.8-0 kubelet-1.23.8-0 kubectl-1.23.8-0
 yum install --nogpgcheck kubelet-1.23.8-0 kubeadm-1.23.8-0 kubectl-1.23.8-0
@@ -547,15 +547,13 @@ yum install --nogpgcheck kubelet-1.23.8-0 kubeadm-1.23.8-0 kubectl-1.23.8-0
 
 #### 5、node 节点安装
 
-node` 节点一般不需要安装 `kubectl
-
 >   yum install kubeadm-1.23.8-0 kubelet-1.23.8-0 kubectl-1.23.8-0
 
 
 
 #### 6、创建k8s软连接
 
-执行：ln -s /usr/bin/kube*  /usr/local/bin/
+执行：`ln -s /usr/bin/kube*  /usr/local/bin/`
 
 
 
@@ -567,7 +565,7 @@ node` 节点一般不需要安装 `kubectl
 >
 >   systemctl status kubelet
 >
-> 发现：kubelet.service - kubelet: The Kubernetes Node Agent，属于正常，k8s还没有配置
+> 发现：`kubelet.service - kubelet: The Kubernetes Node Agent`，属于正常，k8s还没有配置
 
 [版本 History](https://kubernetes.io/releases/)	https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG
 
@@ -595,10 +593,10 @@ kubeadm config images list
 kubeadm config images list --kubernetes-version=v1.23.8 --image-repository registry.cn-chengdu.aliyuncs.com/k8sjf
 ```
 
-
+所需镜像版本：
 
 ```text
-------------官方许哟啊
+------------官方需要
 kube-apiserver:v1.23.8
 kube-controller-manager:v1.23.8
 kube-scheduler:v1.23.8
@@ -614,7 +612,7 @@ kube-webhook-certgen:v1.1.1
 ```
 
 ```shell
-docker login --username=小牛程序app registry.cn-chengdu.aliyuncs.com
+docker login --username=小牛 registry.cn-chengdu.aliyuncs.com
 ```
 
 #### master -> kubeadm 初始化<a name="kubeadm init"></a>
