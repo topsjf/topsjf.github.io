@@ -1,6 +1,5 @@
 // .vuepress/config.ts
 import theme from "./theme.ts";
-//import { searchProPlugin } from "vuepress-plugin-search-pro";
 //import {cp, search} from "./plugins/index.ts";
 import searchPro from "./plugins/searchPro.ts";
 import {defineUserConfig, viteBundler} from "vuepress";
