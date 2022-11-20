@@ -1,13 +1,13 @@
 ---
 icon: edit
-title: 《Java8指南》中文翻译
+title: Java8 指南中文翻译
 category: Java
 tag:
   - Java新特性
 ---
 
 
-# 《Java8指南》中文翻译
+# Java8指南 中文翻译
 
 随着 Java 8 的普及度越来越高，很多人都提到面试中关于Java 8 也是非常常问的知识点。应各位要求和需要，我打算对这部分知识做一个总结。本来准备自己总结的，后面看到Github 上有一个相关的仓库，地址：
 [https://github.com/winterbe/java8-tutorial](https://github.com/winterbe/java8-tutorial)。这个仓库是英文的，我对其进行了翻译并添加和修改了部分内容，下面是正文。
