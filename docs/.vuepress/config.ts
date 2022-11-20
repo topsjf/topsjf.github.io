@@ -1,6 +1,6 @@
 // .vuepress/config.ts
 import theme from "./theme.ts";
-import {cp, search} from "./plugins/index.ts";
+import {cp, searchPro} from "./plugins/index.ts";
 import {defineUserConfig, viteBundler} from "vuepress";
 import {copyCode} from "vuepress-theme-hope";
 
@@ -17,7 +17,7 @@ export default defineUserConfig({
     },
     
     plugins: [
-        search,
+        searchPro,
     ],
     
     bundler: viteBundler({
