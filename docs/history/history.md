@@ -7,6 +7,12 @@ icon: time
 **版本发布历史**
 
 
+## [2.3.0]() (2022-11-20)
+
+- 添加搜索引擎客户端 "vuepress-plugin-search-pro": "2.0.0-beta.124"
+- vue: `3.2.45`
+- vuepress-theme-hope: `2.0.0-beta.124`
+
 
 ## [2.2.6]() (2022-11-12)
 

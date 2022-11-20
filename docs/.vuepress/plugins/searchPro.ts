@@ -1,7 +1,8 @@
 // .vuepress/config.ts
 import { searchProPlugin } from "vuepress-plugin-search-pro";
 
-export const searchPro = () => searchProPlugin({
+//export const searchPro = () =>
+export default searchProPlugin({
       // 搜索引擎，是否索引内容
       indexContent: true,
       // 配置选项
