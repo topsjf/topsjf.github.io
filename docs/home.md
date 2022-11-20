@@ -3,16 +3,12 @@ home: true
 title: 快速导航
 heroImage: /heihei.gif
 heroText: 分类
-tagline: 快速导航。
+tagline: 快速导航
 actions:
 
 - text: 博客主页 🏠
   link: /
   type: default
-
-- text: Java首页
-  link: /java/java
-  type: primary
 
 - text: 文章中心
   link: /article/
