@@ -13,6 +13,8 @@ icon: time
 - vue: `3.2.45`
 - vuepress-theme-hope: `2.0.0-beta.124`
 
+![](./230.jpg)
+
 
 ## [2.2.6]() (2022-11-12)
 
