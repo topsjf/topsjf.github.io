@@ -1,0 +1,1566 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
+  <id>https://topjf.github.io/</id>
+  <title>topjf</title>
+  <subtitle>꧁「小牛专属笔记本」꧂</subtitle>
+  <updated>2023-01-11T10:51:02.481Z</updated>
+  <generator>vuepress-plugin-feed2</generator>
+  <link rel="self" href="https://topjf.github.io/atom.xml"/>
+  <link rel="alternate" href="https://topjf.github.io/"/>
+  <category term="Docker"/>
+  <category term="Java"/>
+  <category term="kubernetes"/>
+  <category term="中间件"/>
+  <category term="关于网站"/>
+  <category term="面试宝典"/>
+  <category term="计算机书籍"/>
+  <category term="设计模式"/>
+  <category term="Cloud"/>
+  <category term="mybatis"/>
+  <category term="Nacos"/>
+  <category term="文件服务"/>
+  <category term="Linux"/>
+  <category term="ElasticSearch"/>
+  <category term="开源项目"/>
+  <category term="开发工具"/>
+  <category term="web"/>
+  <category term="database"/>
+  <entry>
+    <title type="html">一键安装docker脚本</title>
+    <id>https://topjf.github.io/docker/auto-install-script.html</id>
+    <link href="https://topjf.github.io/docker/auto-install-script.html"/>
+    <updated>2022-12-22T02:06:55.000Z</updated>
+    <summary type="html">sudo sh install-docker.sh ```sh #!/bin/bash kill_s(){ # https://blog.csdn.net/qq_42476834/article/details/124719250 echo -e "\n$(date +%Y-%m-%d,%H:%M:%S)\n--&gt; PID=$$,PPID=$PPID"...</summary>
+    <category term="Docker" scheme=""/>
+    <published>2022-05-31T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">session+redis防止重复提交</title>
+    <id>https://topjf.github.io/java/PreventDuplicateSubmissions.html</id>
+    <link href="https://topjf.github.io/java/PreventDuplicateSubmissions.html"/>
+    <updated>2022-12-22T11:34:16.000Z</updated>
+    <summary type="html">实现基于 session+redis 的防止重复提交 🏍 gitee源码仓库🚀🚀🚀🚀 定义注解 Submit注解接口</summary>
+    <content type="html"><![CDATA[<h1>实现基于 session+redis 的防止重复提交</h1>
+<p><a href="https://gitee.com/cps007/spring-boot-model" target="_blank" rel="noopener noreferrer">🏍 gitee源码仓库🚀🚀🚀🚀</a></p>
+<h2> 定义注解</h2>
+<p><a href="https://gitee.com/cps007/spring-boot-model/blob/dev/src/main/java/cn/springboot/model/base/annotation/Submit.java" target="_blank" rel="noopener noreferrer">Submit注解接口</a></p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">package</span> <span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>base<span class="token punctuation">.</span>annotation</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token operator">*</span></span><span class="token punctuation">;</span>
+
+<span class="token doc-comment comment">/**
+ * 自定义注解防止表单重复提交
+ *
+ * <span class="token keyword">@author</span> jf
+ */</span>
+<span class="token annotation punctuation">@Target</span><span class="token punctuation">(</span><span class="token class-name">ElementType</span><span class="token punctuation">.</span><span class="token constant">METHOD</span><span class="token punctuation">)</span>
+<span class="token annotation punctuation">@Retention</span><span class="token punctuation">(</span><span class="token class-name">RetentionPolicy</span><span class="token punctuation">.</span><span class="token constant">RUNTIME</span><span class="token punctuation">)</span>
+<span class="token annotation punctuation">@Documented</span>
+<span class="token annotation punctuation">@Inherited</span>
+<span class="token keyword">public</span> <span class="token annotation punctuation">@interface</span> <span class="token class-name">Submit</span> <span class="token punctuation">{</span>
+    <span class="token doc-comment comment">/**
+     * 设置请求次数上限，在于 triggerTime() 内
+     *
+     * <span class="token keyword">@return</span>
+     */</span>
+    <span class="token keyword">int</span> <span class="token function">lockCount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token number">4</span><span class="token punctuation">;</span>
+
+    <span class="token doc-comment comment">/**
+     * 锁定请求时间<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">/&gt;</span></span>
+     * 单位:分钟
+     *
+     * <span class="token keyword">@return</span>
+     */</span>
+    <span class="token keyword">long</span> <span class="token function">lockTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token number">60</span><span class="token punctuation">;</span>
+
+    <span class="token doc-comment comment">/**
+     * 触发重复提交时间
+     *
+     * <span class="token keyword">@return</span>
+     */</span>
+    <span class="token keyword">long</span> <span class="token function">triggerTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token number">6</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">}</span>
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h2> 实现 aop 切面</h2>
+<p><a href="https://gitee.com/cps007/spring-boot-model/blob/dev/src/main/java/cn/springboot/model/service/aspectj/SubmitAspect.java" target="_blank" rel="noopener noreferrer">实现 aop 切面源码</a></p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">package</span> <span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>service<span class="token punctuation">.</span>aspectj</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>base<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Submit</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>base<span class="token punctuation">.</span>enums<span class="token punctuation">.</span></span><span class="token class-name">GlobalExceptionEnum</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>base<span class="token punctuation">.</span>exception<span class="token punctuation">.</span></span><span class="token class-name">GlobalException</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>base<span class="token punctuation">.</span>utils<span class="token punctuation">.</span></span><span class="token class-name">IPUtils</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>base<span class="token punctuation">.</span>utils<span class="token punctuation">.</span></span><span class="token class-name">StringUtils</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">cn<span class="token punctuation">.</span>springboot<span class="token punctuation">.</span>model<span class="token punctuation">.</span>service<span class="token punctuation">.</span>utils<span class="token punctuation">.</span></span><span class="token class-name">RedisUtils</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>aspectj<span class="token punctuation">.</span>lang<span class="token punctuation">.</span></span><span class="token class-name">ProceedingJoinPoint</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>aspectj<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Around</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>aspectj<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Aspect</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>aspectj<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Pointcut</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>aspectj<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">MethodSignature</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>beans<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Autowired</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>stereotype<span class="token punctuation">.</span></span><span class="token class-name">Component</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>context<span class="token punctuation">.</span>request<span class="token punctuation">.</span></span><span class="token class-name">RequestContextHolder</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>context<span class="token punctuation">.</span>request<span class="token punctuation">.</span></span><span class="token class-name">ServletRequestAttributes</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Arrays</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>concurrent<span class="token punctuation">.</span></span><span class="token class-name">TimeUnit</span></span><span class="token punctuation">;</span>
+
+<span class="token doc-comment comment">/**
+ * 重复提交aop切面
+ *
+ * <span class="token keyword">@author</span> jf
+ */</span>
+<span class="token annotation punctuation">@Aspect</span>
+<span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SubmitAspect</span> <span class="token punctuation">{</span>
+    <span class="token doc-comment comment">/**
+     * 重复提交缓存前缀
+     */</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token constant">PREFIX</span> <span class="token operator">=</span> <span class="token string">"submit_prefix:"</span><span class="token punctuation">;</span>
+    <span class="token doc-comment comment">/**
+     * 锁定计数键
+     */</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token constant">LOCK_COUNT_KEY</span> <span class="token operator">=</span> <span class="token string">"submit_lock_count:"</span><span class="token punctuation">;</span>
+    <span class="token doc-comment comment">/**
+     * 锁定恶意请求前缀
+     */</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token constant">LOCK</span> <span class="token operator">=</span> <span class="token string">"submit_lock:"</span><span class="token punctuation">;</span>
+
+    <span class="token annotation punctuation">@Autowired</span>
+    <span class="token keyword">private</span> <span class="token class-name">RedisUtils</span> redisUtils<span class="token punctuation">;</span>
+
+    <span class="token annotation punctuation">@Pointcut</span><span class="token punctuation">(</span><span class="token string">"execution(public * *(..)) &amp;&amp; @annotation(cn.springboot.model.base.annotation.Submit)"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">submitPointCut</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Around</span><span class="token punctuation">(</span><span class="token string">"submitPointCut()"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">interceptor</span><span class="token punctuation">(</span><span class="token class-name">ProceedingJoinPoint</span> joinPoint<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ServletRequestAttributes</span> attributes <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">ServletRequestAttributes</span><span class="token punctuation">)</span> <span class="token class-name">RequestContextHolder</span><span class="token punctuation">.</span><span class="token function">getRequestAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> sessionId <span class="token operator">=</span> <span class="token class-name">RequestContextHolder</span><span class="token punctuation">.</span><span class="token function">getRequestAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getSessionId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">HttpServletRequest</span> request <span class="token operator">=</span> attributes<span class="token punctuation">.</span><span class="token function">getRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">MethodSignature</span> signature <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">MethodSignature</span><span class="token punctuation">)</span> joinPoint<span class="token punctuation">.</span><span class="token function">getSignature</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> signature<span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Submit</span> submit <span class="token operator">=</span> method<span class="token punctuation">.</span><span class="token function">getAnnotation</span><span class="token punctuation">(</span><span class="token class-name">Submit</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">//设置key: submit_prefix:用户ip-sessionId-Path-method+参数</span>
+        <span class="token class-name">String</span> addr <span class="token operator">=</span> <span class="token class-name">IPUtils</span><span class="token punctuation">.</span><span class="token function">getIpAddr</span><span class="token punctuation">(</span>request<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> key <span class="token operator">=</span> <span class="token constant">PREFIX</span> <span class="token operator">+</span> addr <span class="token operator">+</span> <span class="token string">"-"</span> <span class="token operator">+</span> sessionId <span class="token operator">+</span> <span class="token string">"-"</span> <span class="token operator">+</span> request<span class="token punctuation">.</span><span class="token function">getServletPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"-"</span> <span class="token operator">+</span> method<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"-"</span> <span class="token operator">+</span> <span class="token function">getArgs</span><span class="token punctuation">(</span>joinPoint<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> submit_lock_count_key <span class="token operator">=</span> key<span class="token punctuation">.</span><span class="token function">replaceAll</span><span class="token punctuation">(</span><span class="token constant">PREFIX</span><span class="token punctuation">,</span> <span class="token constant">LOCK_COUNT_KEY</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> submit_lock_key <span class="token operator">=</span> key<span class="token punctuation">.</span><span class="token function">replaceAll</span><span class="token punctuation">(</span><span class="token constant">PREFIX</span><span class="token punctuation">,</span> <span class="token constant">LOCK</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Long</span> expire <span class="token operator">=</span> redisUtils<span class="token punctuation">.</span>common<span class="token punctuation">.</span><span class="token function">getExpire</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> message <span class="token operator">=</span> <span class="token class-name">GlobalExceptionEnum</span><span class="token punctuation">.</span><span class="token constant">REPEAT_SUBMIT</span><span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> lock_message <span class="token operator">=</span> <span class="token class-name">GlobalExceptionEnum</span><span class="token punctuation">.</span><span class="token constant">MALICE_REPEAT_SUBMIT</span><span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>redisUtils<span class="token punctuation">.</span>common<span class="token punctuation">.</span><span class="token function">hasKey</span><span class="token punctuation">(</span>submit_lock_key<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">retrunLock</span><span class="token punctuation">(</span>submit_lock_key<span class="token punctuation">,</span> lock_message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">//读取缓存</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>redisUtils<span class="token punctuation">.</span>value<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 触发请求累加 submit_lock_count</span>
+            <span class="token class-name">Integer</span> count <span class="token operator">=</span> redisUtils<span class="token punctuation">.</span>value<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>submit_lock_count_key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            redisUtils<span class="token punctuation">.</span>value<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>submit_lock_count_key<span class="token punctuation">,</span> count <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> submit<span class="token punctuation">.</span><span class="token function">triggerTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment">//记录到达 lockCount,锁定恶意请求</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>count <span class="token operator">&gt;=</span> submit<span class="token punctuation">.</span><span class="token function">lockCount</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                redisUtils<span class="token punctuation">.</span>value<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>submit_lock_key<span class="token punctuation">,</span> <span class="token string">"锁定恶意请求"</span><span class="token punctuation">,</span> submit<span class="token punctuation">.</span><span class="token function">lockTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">MINUTES</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token function">retrunLock</span><span class="token punctuation">(</span>submit_lock_key<span class="token punctuation">,</span> lock_message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">GlobalException</span><span class="token punctuation">(</span><span class="token class-name">GlobalExceptionEnum</span><span class="token punctuation">.</span><span class="token constant">REPEAT_SUBMIT</span><span class="token punctuation">.</span><span class="token function">getCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> message <span class="token operator">+</span> <span class="token string">"，请"</span> <span class="token operator">+</span> expire <span class="token operator">+</span> <span class="token string">"秒后重试！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token comment">// 如果是第一次请求,就将key存入缓存中</span>
+        redisUtils<span class="token punctuation">.</span>value<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> <span class="token string">"第一次请求"</span><span class="token punctuation">,</span> submit<span class="token punctuation">.</span><span class="token function">triggerTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//请求次数=1</span>
+        redisUtils<span class="token punctuation">.</span>value<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>submit_lock_count_key<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> submit<span class="token punctuation">.</span><span class="token function">triggerTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> joinPoint<span class="token punctuation">.</span><span class="token function">proceed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">retrunLock</span><span class="token punctuation">(</span><span class="token class-name">String</span> key<span class="token punctuation">,</span> <span class="token class-name">String</span> message<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">int</span> expire <span class="token operator">=</span> <span class="token class-name">Integer</span><span class="token punctuation">.</span><span class="token function">parseInt</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token function">valueOf</span><span class="token punctuation">(</span>redisUtils<span class="token punctuation">.</span>common<span class="token punctuation">.</span><span class="token function">getExpire</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">60</span><span class="token punctuation">;</span>
+        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">GlobalException</span><span class="token punctuation">(</span><span class="token class-name">GlobalExceptionEnum</span><span class="token punctuation">.</span><span class="token constant">MALICE_REPEAT_SUBMIT</span><span class="token punctuation">.</span><span class="token function">getCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> message <span class="token operator">+</span> <span class="token string">"，请"</span> <span class="token operator">+</span> expire <span class="token operator">+</span> <span class="token string">"分钟后重试！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token class-name">String</span> <span class="token function">getArgs</span><span class="token punctuation">(</span><span class="token class-name">ProceedingJoinPoint</span> joinPoint<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args <span class="token operator">=</span> joinPoint<span class="token punctuation">.</span><span class="token function">getArgs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">boolean</span> argsStatus <span class="token operator">=</span> <span class="token class-name">StringUtils</span><span class="token punctuation">.</span><span class="token function">isNotNull</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>argsStatus<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">StringBuilder</span> data <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StringBuilder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Object</span> o <span class="token operator">:</span> <span class="token class-name">Arrays</span><span class="token punctuation">.</span><span class="token function">stream</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toArray</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                data<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>o<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">return</span> data<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token string">""</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div>]]></content>
+    <category term="Java" scheme=""/>
+    <published>2022-06-08T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">设置docker-k8s快捷指令</title>
+    <id>https://topjf.github.io/k8s/setting-alias.html</id>
+    <link href="https://topjf.github.io/k8s/setting-alias.html"/>
+    <updated>2022-12-22T02:06:55.000Z</updated>
+    <summary type="html">linux 端 vim ~/.bashrc k8s：kubectl 编辑：C:\Users\k\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1 以管理员身份打开Powershell 执行命令: ==Set-ExecutionPolicy RemoteSigned== ，然后重新启...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-05-31T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">配置Redis工具类</title>
+    <id>https://topjf.github.io/middleware/redis/RedisTemplate.html</id>
+    <link href="https://topjf.github.io/middleware/redis/RedisTemplate.html"/>
+    <updated>2022-12-22T11:42:30.000Z</updated>
+    <summary type="html">🏍 🏍 gitee源码 (https://gitee.com/cps007/spring-boot-model) 依赖 RedisConfig 配置 application.yml 配置允许依赖循环引用(==看自己情况而定==) 🚀🚀FastJson2JsonRedisSerializer (https://gitee.com/cps007/s...</summary>
+    <category term="中间件" scheme=""/>
+    <published>2022-06-03T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">网站介绍</title>
+    <id>https://topjf.github.io/about/about-this.html</id>
+    <link href="https://topjf.github.io/about/about-this.html"/>
+    <updated>2023-01-05T06:01:47.000Z</updated>
+    <summary type="html">网站概绍 上得了厅堂，下得了厨房；写得了代码，查得出异常；杀得了木马，翻得了围墙。</summary>
+    <content type="html"><![CDATA[<h1>网站概绍</h1>
+<p class="about_this_1">上得了厅堂，下得了厨房；<br>写得了代码，查得出异常；<br>杀得了木马，翻得了围墙。</p>
+]]></content>
+    <category term="关于网站" scheme=""/>
+    <published>2019-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java面试宝典</title>
+    <id>https://topjf.github.io/all/interview.html</id>
+    <link href="https://topjf.github.io/all/interview.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Java面向对象有哪些特征，如何应用 面向对象编程是利用类和对象编程的一种思想。万物可归类，类是对于世界事物的高度抽象 ，不同的事物之间有不同的关系 ，一个类自身与外界的封装关系，一个父类和子类的继承关系， 一个类和多个类的多态关系。万物皆对象，对象是具体的世界事物。 面向对象的三大特征封装，继承，多态。 1) 封装说明一个类行为和属性与其他类的关系，...</summary>
+    <category term="面试宝典" scheme=""/>
+    <published>2022-07-21T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Linux运维相关</title>
+    <id>https://topjf.github.io/all/linux.html</id>
+    <link href="https://topjf.github.io/all/linux.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">参考地址 (https://zhuanlan.zhihu.com/p/533165245?utm_id=0) 一、linux linux系统启动流程 第一步：开机自检，加载BIOS; 第二步：读取ＭＢＲ; 第三步：Boot Loader grub引导菜单; 第四步：加载kernel内核; 第五步：init进程依据inittab文件夹来设定运行级别; 第...</summary>
+    <category term="面试宝典" scheme=""/>
+    <published>2022-08-17T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">网络相关</title>
+    <id>https://topjf.github.io/all/network.html</id>
+    <link href="https://topjf.github.io/all/network.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">基础 网络4-5-7模型 TCP TCP 在传输之前会进行三次沟通，一般称为“三次握手”，传完数据断开的时候要进行四次沟通，一般称为“四次挥手”。 三次握手 客户端–发送带有 SYN 标志的数据包–⼀次握⼿–服务端; 服务端–发送带有 SYN/ACK 标志的数据包–⼆次握⼿–客户端; 客户端–发送带有带有 ACK 标志的数据包–三次握⼿–服务端; 为什...</summary>
+    <category term="面试宝典" scheme=""/>
+    <published>2022-11-16T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">单体架构演变到分布式架构</title>
+    <id>https://topjf.github.io/architecture/evolution-to-cloud.html</id>
+    <link href="https://topjf.github.io/architecture/evolution-to-cloud.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">项目架构演变 &amp;gt; 分布式：缓存-消息队列-数据库</summary>
+    <content type="html"><![CDATA[<p>项目架构演变 &gt; 分布式：缓存-消息队列-数据库</p>
+]]></content>
+    <category term="Java" scheme=""/>
+    <published>2019-10-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java书籍</title>
+    <id>https://topjf.github.io/books/java.html</id>
+    <link href="https://topjf.github.io/books/java.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Java书籍推荐</summary>
+    <category term="计算机书籍" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Docker容器服务编排</title>
+    <id>https://topjf.github.io/docker/docker-compose.html</id>
+    <link href="https://topjf.github.io/docker/docker-compose.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">介绍 实战使用</summary>
+    <category term="Docker" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Docker从入门到上手干事</title>
+    <id>https://topjf.github.io/docker/docker-in-action.html</id>
+    <link href="https://topjf.github.io/docker/docker-in-action.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Docker介绍 什么是 Docker？ 说实话关于 Docker 是什么并不太好说，下面我通过四点向你说明 Docker 到底是个什么东西。 Docker 是世界领先的软件容器平台，基于 Go 语言 进行开发实现。; Docker 能够自动执行重复性任务，例如搭建和配置开发环境，从而解放开发人员。; 用户可以方便地创建和使用容器，把自己的应用放入容器...</summary>
+    <category term="Docker" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">docker安装mysql-redis-nginx-nacos-mq-es</title>
+    <id>https://topjf.github.io/docker/docker-install-mysql-redis-nginx-nacos-mq-es.html</id>
+    <link href="https://topjf.github.io/docker/docker-install-mysql-redis-nginx-nacos-mq-es.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">docker桌面镜像加速 --name="容器新名字"：为容器指定一个名称； -i：以交互模式运行容器，通常与-t或者-d同时使用； -t：为容器重新分配一个伪输入终端，通常与-i同时使用； -d: 后台运行容器，并返回容器ID； -P: 随机端口映射，容器内部端口随机映射到主机的端口 -p: 指定端口映射，格式为：主机(宿主)端口:容器端口 mysq...</summary>
+    <category term="Docker" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Docker 基本概念解读</title>
+    <id>https://topjf.github.io/docker/docker-intro.html</id>
+    <link href="https://topjf.github.io/docker/docker-intro.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">本文只是对 Docker 的概念做了较为详细的介绍，并不涉及一些像 Docker 环境的安装以及 Docker 的一些常见操作和命令。</summary>
+    <content type="html"><![CDATA[<p><strong>本文只是对 Docker 的概念做了较为详细的介绍，并不涉及一些像 Docker 环境的安装以及 Docker 的一些常见操作和命令。</strong></p>
+]]></content>
+    <category term="Docker" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Docker基础</title>
+    <id>https://topjf.github.io/docker/docker-note.html</id>
+    <link href="https://topjf.github.io/docker/docker-note.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">前导 Docker 包括三个基本概念: 镜像（Image）：Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。; 容器（Container）：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计...</summary>
+    <category term="Docker" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">DockerFile基于centos7并设置中文UTF-8字符集</title>
+    <id>https://topjf.github.io/docker/dockerfile-centos.html</id>
+    <link href="https://topjf.github.io/docker/dockerfile-centos.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">dockerfile脚本</summary>
+    <category term="Docker" scheme=""/>
+    <published>2020-01-20T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">DockerFile基于jdk</title>
+    <id>https://topjf.github.io/docker/dockerfile-jdk.html</id>
+    <link href="https://topjf.github.io/docker/dockerfile-jdk.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <category term="Docker" scheme=""/>
+    <published>2020-01-20T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">网站历史</title>
+    <id>https://topjf.github.io/history/history.html</id>
+    <link href="https://topjf.github.io/history/history.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">include(../../CHANGELOG.md{3-})</summary>
+    <category term="关于网站" scheme=""/>
+    <published>2019-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">23种设计模式整理</title>
+    <id>https://topjf.github.io/java/23-design-patterns.html</id>
+    <link href="https://topjf.github.io/java/23-design-patterns.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">六大设计原则，23种设计模式</summary>
+    <content type="html"><![CDATA[<p>六大设计原则，23种设计模式</p>
+]]></content>
+    <category term="设计模式" scheme=""/>
+    <published>2019-08-06T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">异步</title>
+    <id>https://topjf.github.io/java/asynchronous.html</id>
+    <link href="https://topjf.github.io/java/asynchronous.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1.1 线程 前3种不用。 1.2 CompletableFuture A、.completedFuture 返回一个新的 CompletableFuture，它已经用给定的值完成了。 B、.supplyAsync 返回一个新的 CompletableFuture，它由在给定执行器中运行的任务异步完成，其值是通过调用给定供应商获得的 C、.runAsy...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-12-10T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">分布式锁、缓存</title>
+    <id>https://topjf.github.io/java/cloud-lock-cache.html</id>
+    <link href="https://topjf.github.io/java/cloud-lock-cache.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1. 双写模式：写数据库，写缓存 2. 失效模式：缓存失效（删除缓存），写数据库 读取缓存步骤数据一致性一般没有什么问题，但是一旦涉及到数据更新：数据库和缓存更新，就容易出现缓存(Redis)和数据库（MySQL）间的数据一致性问题。 不管先保存到MySQL，还是先保存到Redis都面临着一个保存成功而另外一个保存失败的情况。 不管是先写MySQL数据...</summary>
+    <category term="Java" scheme=""/>
+    <category term="Cloud" scheme=""/>
+    <published>2020-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">分布式session</title>
+    <id>https://topjf.github.io/java/cloud-session.html</id>
+    <link href="https://topjf.github.io/java/cloud-session.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">分布式 session 7.1 分析 7.2 解决session已知弊端： 使用第一种，但是存在子域名问题，所以使用SpringSession 7.3 开始 7.3.1 依赖、启动类 7.3.2 配置，放大作用域 7.3.2 开始</summary>
+    <category term="Java" scheme=""/>
+    <category term="Cloud" scheme=""/>
+    <published>2020-05-13T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">异常处理</title>
+    <id>https://topjf.github.io/java/java-exception.html</id>
+    <link href="https://topjf.github.io/java/java-exception.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">全局异常 错误码和错误信息定义类 1. 错误码定义规则为5为数字 2. 前两位表示业务场景，最后三位表示错误码。例如：10001。10:通用 001:系统未知异常 3. 维护错误码后需要维护错误描述，将他们定义为枚举形式 控制器统一的异常处理（ExceptionControllerAdvice） comment</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-16T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">JSR303校验</title>
+    <id>https://topjf.github.io/java/java-jsr303.html</id>
+    <link href="https://topjf.github.io/java/java-jsr303.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1 分组校验 1.1 创建组接口 1.2 使用Controller 1.3 实体类Entity 1.4 测试 ​	http://localhost:50000/api/product/brand/save 2 自定义校验 5）、自定义校验 1）、编写一个自定义的校验注解 2）、编写一个自定义的校验器 ConstraintValidator 3）、关联自...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-20T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java日志框架</title>
+    <id>https://topjf.github.io/java/java-log.html</id>
+    <link href="https://topjf.github.io/java/java-log.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">设置日志输出级别：系统设置级别为： DEBUG（打印 DEBUG+INFO+WARN+ERROR 的信息） INFO（打印 INFO+WARN+ERROR 的信息） WARN（打印 WARN+ERROR 的信息） ERROR（打印 ERROR 的信息） logback-spring.xml 使用配置</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">jmeter性能压测</title>
+    <id>https://topjf.github.io/java/jmeter.html</id>
+    <link href="https://topjf.github.io/java/jmeter.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">-- 指标： -- Jmeter 下载：https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.4.3.tgz https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.4.3.zip 常用： 受【cpu,jvm,数据库，网络IO，中间...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">jvm</title>
+    <id>https://topjf.github.io/java/jvm.html</id>
+    <link href="https://topjf.github.io/java/jvm.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1.1 加载过程介绍 如果 JVM 想要执行这个 .class 文件，我们需要将其装进一个类加载器中，它就像一个搬运工一样，会把所有的 .class 文件全部搬进 JVM 里面来。 重点知识： Java 文件经过编译后变成 .class 字节码文件；; 字节码文件通过类加载器被搬运到 JVM 虚拟机中；; 虚拟机主要的 5 大块：方法区，堆都为线程共享...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-08-22T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">本地事务、分布式事务及seata</title>
+    <id>https://topjf.github.io/java/local-cloud-affairs-seata.html</id>
+    <link href="https://topjf.github.io/java/local-cloud-affairs-seata.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">image-20211004222533328 image-20211004223125542 1、事物本质：原子性、一致性、隔离性、持久性 数据库事务的几个特性：原子性(Atomicity )、一致性( Consistency )、隔离性或独立性( Isolation) 和持久性(Durabilily),简称就是ACID; ●原子性：一系列的操作整体...</summary>
+    <category term="Java" scheme=""/>
+    <category term="Cloud" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">整合mybatis-plus</title>
+    <id>https://topjf.github.io/java/mybatis-plus.html</id>
+    <link href="https://topjf.github.io/java/mybatis-plus.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1、commen引入依赖 2、数据源 3、测试id自增 ```java RunWith(SpringRunner.class) SpringBootTest public class DemoTest { @Autowired private BrandService brandService; @Test public void getAotuId(...</summary>
+    <category term="mybatis" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">nacos-gateway-sentinel-sleuth</title>
+    <id>https://topjf.github.io/java/nacos-gateway-sentinel-sleuth.html</id>
+    <link href="https://topjf.github.io/java/nacos-gateway-sentinel-sleuth.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1、Nacos 官方地址：https://nacos.io github地址：https://github.com/alibaba/nacos https://nacos.io/zh-cn/docs/quick-start-spring-boot.html 面试题：微服务间远程交互的过程？ 1. 先去注册中心查询服务的服务器地址 2. 调用方给对方发送...</summary>
+    <category term="Cloud" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Nacos笔记</title>
+    <id>https://topjf.github.io/java/nacos-note.html</id>
+    <link href="https://topjf.github.io/java/nacos-note.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">文档：https://nacos.io/zh-cn/docs/what-is-nacos.html Nacos是什么? Nacos简介 (https://nacos.io/zh-cn/docs/what-is-nacos.html) 什么是 Nacos 服务（Service）是 Nacos 世界的一等公民。Nacos 支持几乎所有主流类型的“服务”的发...</summary>
+    <category term="Nacos" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">OSS</title>
+    <id>https://topjf.github.io/java/oss.html</id>
+    <link href="https://topjf.github.io/java/oss.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">[阿里文档](	https://help.aliyun.com/document_detail/32009.html https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss 如果使用的是Java 9及以上的版本，则需要添加jaxb相关依赖 创建\获取账户 https://ram....</summary>
+    <category term="文件服务" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">权限管理</title>
+    <id>https://topjf.github.io/java/permission-management.html</id>
+    <link href="https://topjf.github.io/java/permission-management.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">一 pom依赖 二 Shiro配置 三 自定义Realm 四 自定义过滤器Auth2Filter 五 Auth2Token 六 登录接口 1、动态路由 image-20210828222133378 自己!image-20210828215739123 (./permission-management.assets/true-image-2021082...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">单点登录（SSO）</title>
+    <id>https://topjf.github.io/java/single-sign-on.html</id>
+    <link href="https://topjf.github.io/java/single-sign-on.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">SSO英文全称Single Sign On，单点登录。 SSO是在多个应用系统中，用户只需要登录一次就可以访问所有相互信任的应用系统。 2.1. cookie问题 电商平台通常由多个微服务组成，每个微服务都有独立的域名，而cookie是有作用域的。 查看浏览器控制台： domain：作用域名 domain参数 atguigu.com sso.atgui...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-02-02T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">SpringCloud-Alibaba项目笔记-基础篇</title>
+    <id>https://topjf.github.io/java/spring-cloud-alibaba-note-basis.html</id>
+    <link href="https://topjf.github.io/java/spring-cloud-alibaba-note-basis.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1,环境准备--技术选型 开发环境: Linux UOS --&gt; idea2019.3 --&gt; maven3.6.3 ---&gt; jdk1.8---&gt; redis5.0---&gt; nginx---&gt;docker---&gt;k8s 1、分布式基础概念 ●微服务、注册中心、配置中心、远程调用、Feign、 网关 2、基础开发 SpringBoot2.0、Sprin...</summary>
+    <category term="Cloud" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">SpringCloud-Alibaba项目笔记-高级篇</title>
+    <id>https://topjf.github.io/java/spring-cloud-alibaba-note-high-level.html</id>
+    <link href="https://topjf.github.io/java/spring-cloud-alibaba-note-high-level.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">ES集群 image-20210604131952296 image-20210604132012980 商品上架 ：把数据保存到es ：spu -- 构造sku检索属性 1、上架 product/spuinfo/list/{spuId}/up -- 发送远程调用，库存系统查询是否有库存 /ware/waresku/hasstock 创建 WareFe...</summary>
+    <category term="Cloud" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">spring cloud 的几大组件</title>
+    <id>https://topjf.github.io/java/spring-cloud-core-components.html</id>
+    <link href="https://topjf.github.io/java/spring-cloud-core-components.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">spring cloud 的几大组件 组件名称 ----- ----- 分布式系统套件版本 Spring Cloud + Alibaba 服务注册与发现 Eureka / Consul / Nacos 配置中心 Config / Nacos 网关路由 Gateway / Zull (动态网关) 服务调用 OpenFeign（推荐） / RestTemp...</summary>
+    <category term="Cloud" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">swagger</title>
+    <id>https://topjf.github.io/java/swagger.html</id>
+    <link href="https://topjf.github.io/java/swagger.html"/>
+    <updated>2022-12-22T11:48:55.000Z</updated>
+    <summary type="html">spring-boot 版本 &amp;gt;= 2.6.x 的 swagger 配置请看这里： 🐱‍🚀</summary>
+    <content type="html"><![CDATA[<p>spring-boot 版本 &gt;= 2.6.x 的 swagger 配置请看这里： <a href="https://blog.csdn.net/qq_42476834/article/details/125534198" target="_blank" rel="noopener noreferrer">🐱‍🚀</a></p>
+]]></content>
+    <category term="Java" scheme=""/>
+    <published>2020-06-07T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">模板引擎-Thymeleaf</title>
+    <id>https://topjf.github.io/java/template-engine-thymeleaf.html</id>
+    <link href="https://topjf.github.io/java/template-engine-thymeleaf.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1. 认识thymeleaf 1.1. 模板技术 把页面中的静态数据替换成从后台数据库中的数据。这种操作用jsp就可以实现。但是Spring boot 的架构不推荐使用Jsp，而且支持也不好，所以如果你是用springboot的话，一般使用Freemarker或者Thymeleaf。 1.2. 简介 官方网站：https://www.thymeleaf...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">测试md</title>
+    <id>https://topjf.github.io/java/test.html</id>
+    <link href="https://topjf.github.io/java/test.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">内容目录 [[toc]] 基础概 h2 Java 语言有哪些特点? h3 有哪些特 h4 有哪些特 h5 点击查看代码 include(./test-i.md{6-}) 哪些特哪 些特 哪些特哪 些特 哪些特 哪 ==些特== 哪些特哪些特哪些特哪些特 重中之重走着走着自作主张自增 1. 简单易学； 2. 面向对象（封装，继承，多态）； 3. 平台无关...</summary>
+    <category term="Java" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">定时任务</title>
+    <id>https://topjf.github.io/java/timed-task.html</id>
+    <link href="https://topjf.github.io/java/timed-task.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <content type="html"><![CDATA[<p></p>
+]]></content>
+    <category term="Java" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 基础篇</title>
+    <id>https://topjf.github.io/k8s/basis.html</id>
+    <link href="https://topjf.github.io/k8s/basis.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">中文社区: https://www.kubernetes.org.cn/ 官方文档: https://kubernetes.io/zh/docs/home/ 社区文档: http://docs.kubernetes.org.cn/ https://feisky.gitbooks.io/kubernetes/content/ 历史版本 Release H...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2020-04-20T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 流水线部署</title>
+    <id>https://topjf.github.io/k8s/deploys.html</id>
+    <link href="https://topjf.github.io/k8s/deploys.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1）、gitee拉取代码 2）、自动打包 3）、自动部署 4）、</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 软件管理工具-Helm</title>
+    <id>https://topjf.github.io/k8s/helm.html</id>
+    <link href="https://topjf.github.io/k8s/helm.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Helm 是 Kubernetes 的包管理器 Helm 版本选择 Helm 版本 支持的 Kubernetes 版本 :-------::-----------------: 3.9.x 1.24.x - 1.21.x 3.8.x 1.23.x - 1.20.x 3.7.x 1.22.x - 1.19.x 3.6.x 1.21.x - 1.18.x ...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s Ingress</title>
+    <id>https://topjf.github.io/k8s/ingress.html</id>
+    <link href="https://topjf.github.io/k8s/ingress.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Ingress 基于域名访问，不需要通过ip：port访问服务 ingress：通过域名、负载均衡 ingress 底层是nginx 通过Service 发现Pod进行关联。基于域名访问。 通过Ingress Controller 实现Pod负载均衡。 支持TCP/UDP 4层负载均衡和HTTP 7层负载均衡。 执行流程 ingress-nginx-c...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 安装常用软件</title>
+    <id>https://topjf.github.io/k8s/install-application.html</id>
+    <link href="https://topjf.github.io/k8s/install-application.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">如何部署 可以使用kubesphere，快速搭建MySQL.环境。 有状态服务抽取配置为ConfigMap; 有状态服务必须使用pvc 持久化数据; 服务集群内访问使用DNS 提供的稳定域名; MySQL Redis ES MQ Nacos ZipKin Sentinel Java应用</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 可视化管理工具-KubeSphere</title>
+    <id>https://topjf.github.io/k8s/kube-sphere.html</id>
+    <link href="https://topjf.github.io/k8s/kube-sphere.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">在master主机安装KubeSphere 官网 (https://kubesphere.com.cn/zh/) ks-installer 教程 (https://github.com/kubesphere/ks-installer/blob/master/README_zh.md) https://github.com/kubesphere/kube...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 可视化管理工具-KubeOperator</title>
+    <id>https://topjf.github.io/k8s/kubeoperator.html</id>
+    <link href="https://topjf.github.io/k8s/kubeoperator.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">https://kubeoperator.io/ (https://kubeoperator.io/) https://github.com/kubeoperator/kubeoperator/ (https://github.com/kubeoperator/kubeoperator/)	star:4.4K https://gitee.com/k8s...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 可视化管理工具-Kuboard</title>
+    <id>https://topjf.github.io/k8s/kuboard.html</id>
+    <link href="https://topjf.github.io/k8s/kuboard.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">https://kuboard.cn/ (https://kuboard.cn/) https://github.com/eip-work/kuboard-press (https://github.com/eip-work/kuboard-press) 	star:15.9K https://gitee.com/k8ss/kuboard-press ...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s nfs-pv-pvc-ConfigMap-secret</title>
+    <id>https://topjf.github.io/k8s/nfs-pv-pvc-config-secret.html</id>
+    <link href="https://topjf.github.io/k8s/nfs-pv-pvc-config-secret.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">NFS 文件系统 安装nfs (https://zhuanlan.zhihu.com/p/411489781) storageclass存储方法 (https://blog.csdn.net/weixin_43384009/article/details/105958068) nfs文件系统 (https://www.yuque.com/leifeng...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s Pod-yaml篇</title>
+    <id>https://topjf.github.io/k8s/pod-yaml.html</id>
+    <link href="https://topjf.github.io/k8s/pod-yaml.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1、Pod 整体结构 Pod YAML的整体结构，可以初步分为 Resource(资源)、Object(元数据)、Spec(规范)、Status(状态)。 Resource：定义资源类型与版本， 作为从Rest API中获取资源必带的属性。; Object：资源的元数据属性，明确资源的基本标识。; Spec / Status：; - Spec：定义资源...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">k8s 可视化管理工具-Rancher</title>
+    <id>https://topjf.github.io/k8s/rancher.html</id>
+    <link href="https://topjf.github.io/k8s/rancher.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">https://rancher.com/ (https://rancher.com/) https://www.rancher.cn/ (https://www.rancher.cn/) https://github.com/rancher/rancher (https://github.com/rancher/rancher)	star:19.8K ...</summary>
+    <category term="kubernetes" scheme=""/>
+    <published>2022-08-24T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Linux常用命令实例</title>
+    <id>https://topjf.github.io/linux/command-examples.html</id>
+    <link href="https://topjf.github.io/linux/command-examples.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1、查看有多少个IP访问： 2、查看某一个页面被访问的次数： 3、查看每一个IP访问了多少个页面： 4、将每个IP访问的页面数进行从小到大排序： 5、查看某一个IP访问了哪些页面： 6、去掉搜索引擎统计的页面： 7、查看2015年8月16日14时这一个小时内有多少IP访问: 8、查看访问前十个ip地址 uniq -c 相当于分组统计并把统计数放在最前面...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-10-11T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">磁盘相关知识</title>
+    <id>https://topjf.github.io/linux/disk.html</id>
+    <link href="https://topjf.github.io/linux/disk.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">RAID磁盘阵列 在单机时代，采用单块磁盘进行数据存储和读写的方式，由于寻址和读写的时间消耗，导致I/O性能非常低，且存储容量还会受到限制。 另外，单块磁盘极其容易出现物理故障，经常导致数据的丢失。因此大家就在想，有没有一种办法将多块独立的磁盘结合在一起组成一个技术方案， 来提高数据的可靠性和I/O性能呢。 在这种情况下，RAID技术就应运而生了。 R...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-11-16T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Linux常见异常分析</title>
+    <id>https://topjf.github.io/linux/exception-analysis.html</id>
+    <link href="https://topjf.github.io/linux/exception-analysis.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1 常用的 Load 分析方法 CPU高、Load高 通过 top 命令查找占用CPU最高的进程PID；; 通过 top -Hp PID 查找占用CPU最高的线程TID;; 对于java程序，使用 jstack 打印线程堆栈信息；; 通过 printf %x tid 打印出最消耗CPU线程的十六进制；; CPU低、Load高 产生的原因一句话总结就是：...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-11-09T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Jenkins自动化部署</title>
+    <id>https://topjf.github.io/linux/jenkins.html</id>
+    <link href="https://topjf.github.io/linux/jenkins.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">开发push代码到git，触发jenkins自动pull代码，通过maven编译、打包，然后通过执行shell脚本使docker构建镜像并push到私服（或者阿里云）仓库，此操作完成后jenkins服务器上再执行SSH命令登录到部署服务器，docker从仓库（私服）拉取镜像，启动容器。整个操作流程完成。 通过 war 安装 2.372（推荐使用） 下载...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-08-09T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">centos网络网卡配置</title>
+    <id>https://topjf.github.io/linux/network-setting.html</id>
+    <link href="https://topjf.github.io/linux/network-setting.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">一、设置本机静态IP 1、查看本机ip：ifconfig 2、设置静态ip -&gt; 配置文件 生产 UUID： uuidgen ens33 ls -l /dev/disk/by-uuid 查看 UUID： nmcli con | sed -n '1,2p' BOOTPROTO： dhcp 表示使用动态IP，dhcp 动态IP地址是自行生成。 none 无...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2021-09-10T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Shell 脚本编程</title>
+    <id>https://topjf.github.io/linux/shell.html</id>
+    <link href="https://topjf.github.io/linux/shell.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">基础认识 终端仿真器 GNOME Terminal（一般系统默认） https://help.gnome.org/users/gnome-terminal/stable Konsole Terminal http://konsole.kde.org Eterm http://www.eterm.org Final Term http://finalte...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-09-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">centos(kernel)内核升级</title>
+    <id>https://topjf.github.io/linux/update-kernel.html</id>
+    <link href="https://topjf.github.io/linux/update-kernel.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">升级内核、并删除当前无用的系统内核版本 https://kernel.org/ (https://kernel.org/) mainline: 5.18-rc6 2022-05-08 [tarball (https://git.kernel.org/torvalds/t/linux-5.18-rc6.tar.gz)] [patch (https://g...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2021-08-14T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">YUM 源配置</title>
+    <id>https://topjf.github.io/linux/yum-repo.html</id>
+    <link href="https://topjf.github.io/linux/yum-repo.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">https://blog.csdn.net/qq42476834/article/details/121433712 (https://blog.csdn.net/qq42476834/article/details/121433712) 查看系统的版本：cat /etc/redhat-release 一、用Centos镜像搭建本地yum源 1.安装C...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2021-08-14T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ElasticSearch 全文检索</title>
+    <id>https://topjf.github.io/middleware/elastic-search.html</id>
+    <link href="https://topjf.github.io/middleware/elastic-search.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">1. ElasticSearch概念 1.1 ES介绍 应用程序搜索	网站搜索	企业搜索	日志处理和分析 基础设施指标和容器监测	应用程序性能监测 地理空间数据分析和可视化	安全分析	业务分析 官方文档 : https://www.elastic.co/guide/en/elasticsearch/reference/current/index.htm...</summary>
+    <category term="ElasticSearch" scheme=""/>
+    <published>2020-05-15T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Nginx</title>
+    <id>https://topjf.github.io/middleware/nginx.html</id>
+    <link href="https://topjf.github.io/middleware/nginx.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">常用指令 1) 重启：./sbin/nginx -s quit &amp;&amp; ./sbin/nginx 2) 加载配置：./sbin/nginx -s reload 3) 退出： ./sbin/nginx -s quit 4) 启动：./sbin/nginx 5) 检查文件：./sbin/nginx -t 6) 查看服务：ps -ef | grep nginx...</summary>
+    <category term="中间件" scheme=""/>
+    <published>2020-03-10T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">开源项目精选</title>
+    <id>https://topjf.github.io/open-source/open-source.html</id>
+    <link href="https://topjf.github.io/open-source/open-source.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">精选 Github 和 Gitee 上优质的开源项目。</summary>
+    <content type="html"><![CDATA[<p>精选 Github 和 Gitee 上优质的开源项目。</p>
+]]></content>
+    <category term="开源项目" scheme=""/>
+    <published>2019-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">开发工具</title>
+    <id>https://topjf.github.io/open-source/tools.html</id>
+    <link href="https://topjf.github.io/open-source/tools.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Java 相关 JADX (https://github.com/skylot/jadx) ：一款功能强大的反编译工具。; Recaf (https://github.com/Col-E/Recaf) ： Java 字节码编辑器，基于 ASM（Java 字节码操作框架） 来修改字节码，可简化编辑已编译 Java 应用程序的过程。; Redis 可视化管...</summary>
+    <category term="开源项目" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">eclipse</title>
+    <id>https://topjf.github.io/tools/eclipse.html</id>
+    <link href="https://topjf.github.io/tools/eclipse.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">eclipse 汉化 1) 地址： http://www.eclipse.org/babel/downloads.php 在上面这个地址里面寻找对应的版本地址，，选中复制，如我的版本网址（http://download.eclipse.org/technology/babel/update-site/R0.15.1/neon） 3) 点击help下的 ...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2022-07-26T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">gradle管理</title>
+    <id>https://topjf.github.io/tools/gradle.html</id>
+    <link href="https://topjf.github.io/tools/gradle.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">技术选型 名称 版本 --------------------------------------------------------------------------------------------------------- JDK 17.0.3 Gradle 7.4.2，PDF文档 Groovy 1.5.8 - 3.0.9 Kotlin 1....</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2022-07-10T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">idea</title>
+    <id>https://topjf.github.io/tools/idea.html</id>
+    <link href="https://topjf.github.io/tools/idea.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">idea插件： Alibaba Java、CamelCase、Chinese、codeGlance3、codota、GenerateAllSetter、gitee、Grep Console、mybatis-log、RestfulToolkit、Translation、vuejs、GsonFormatPlus、json parser idea设置 jav...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2020-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">jdk安装与配置</title>
+    <id>https://topjf.github.io/tools/java.html</id>
+    <link href="https://topjf.github.io/tools/java.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">一、环境准备 前提是先把网络ip配置好 1、下载JDK 官网下载地址： jdk各个版本下载 (https://www.oracle.com/java/technologies/downloads/); jdk各个版本档案 (https://www.oracle.com/java/technologies/downloads/archive/); jdk...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2020-01-21T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">maven管理</title>
+    <id>https://topjf.github.io/tools/maven.html</id>
+    <link href="https://topjf.github.io/tools/maven.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">安装与配置 Windows、Linux 配置 Maven3.6、gradle 阿里下载源 Maven3.X 下载地址 (https://maven.apache.org/download.cgi); maven nginx导航资源 (https://mirrors.bfsu.edu.cn/apache/maven/); pom依赖查询地址： maven...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">nodejs配置</title>
+    <id>https://topjf.github.io/tools/nodejs-setting.html</id>
+    <link href="https://topjf.github.io/tools/nodejs-setting.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">linux 配置 Node.js 安装-教程 (https://blog.csdn.net/qq_42476834/article/details/110789382) 官网下载 (http://nodejs.cn/download/) 设置淘宝镜像源需要换回时改为官方的镜像源查看配置：npm config list npx -p npm@6 npm ...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2020-01-06T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Linux 数据同步工具</title>
+    <id>https://topjf.github.io/tools/rsync.html</id>
+    <link href="https://topjf.github.io/tools/rsync.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">一、简介 1、认识 Rsync（remote synchronize）是一个远程数据同步工具，可通过LAN/WAN快速同步多台主机间的文件。Rsync使用所谓的“Rsync算法”来使本地和远 程两个主机之间的文件达到同步，这个算法只传送两个文件的不同部分，而不是每次都整份传送，因此速度相当快； Rsync支持大多数的类Unix系统，无论是Linux、S...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2022-10-11T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">虚拟机批量处理vagrant_vmware</title>
+    <id>https://topjf.github.io/tools/vagrant-vmware.html</id>
+    <link href="https://topjf.github.io/tools/vagrant-vmware.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">一、安装 centos7.9 模板 安装：略略略略 步骤： 1. 查看当前系统版本 2. 设置sudo权限 3. 国内yum源 4. 升级内核 5. 关闭防火墙firewalld、关闭selinux 6. 配置网卡 7. 禁用该可预测命名规则 8. 重新生成GRUB配置并更新内核参数 1、查看当前系统版本 2、设置sudo权限 1、su root 2、...</summary>
+    <category term="开发工具" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">react</title>
+    <id>https://topjf.github.io/web/web-react.html</id>
+    <link href="https://topjf.github.io/web/web-react.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">一、基础语法 https://zh-hans.reactjs.org/ 1、react 常用UI组件库 Material-UI：https://material-ui.com/（面向web端） 蚂蚁设计Ant Design：https://ant.design/（面向web端） SemanticUI：https://semantic-ui.com/ R...</summary>
+    <category term="web" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">vue</title>
+    <id>https://topjf.github.io/web/web-vue.html</id>
+    <link href="https://topjf.github.io/web/web-vue.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">Vue创建模板 http请求 工具 get post 自定义 message.js 基本语法 指令：单项绑定v-bind &amp; 双向绑定v-model 1. 单向绑定：v-bind（简写：‘‘:style’’）、更改页面元素但data不会变 2. 双向绑定 v-model 指令：v-no、v-for、v-if、v-show v-no：用来绑定事件 ~~~...</summary>
+    <category term="web" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">前端部分</title>
+    <id>https://topjf.github.io/web/webpart.html</id>
+    <link href="https://topjf.github.io/web/webpart.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">CSS 模型盒 1、margin: 包括margin-top、margin-right、margin-bottom、margin-left，控制块级元素之间的距离，它们是透明不可见的。 2、padding: 包括padding-top、padding-right、padding-bottom、padding-left，控制块级元素内部，content与...</summary>
+    <category term="web" scheme=""/>
+    <published>2020-01-01T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">MySQL内容整理</title>
+    <id>https://topjf.github.io/database/mysql/MySQL.html</id>
+    <link href="https://topjf.github.io/database/mysql/MySQL.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">数据结构在线演示 二叉树在线演示 红黑树在线演示 B树在线演示 B+树在线演示</summary>
+    <content type="html"><![CDATA[<p><a target="_blank" href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">数据结构在线演示</a></p>
+<p><a target="_blank" href="https://www.cs.usfca.edu/~galles/visualization/BST.html">二叉树在线演示</a></p>
+<p><a target="_blank" href="https://www.cs.usfca.edu/~galles/visualization/RedBlack.html">红黑树在线演示</a></p>
+<p><a target="_blank" href="https://www.cs.usfca.edu/~galles/visualization/BTree.html">B树在线演示</a></p>
+<p><a target="_blank" href="https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html">B+树在线演示</a></p>
+]]></content>
+    <category term="database" scheme=""/>
+    <published>2022-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">linux安装MySQL</title>
+    <id>https://topjf.github.io/database/mysql/install.html</id>
+    <link href="https://topjf.github.io/database/mysql/install.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">rpm 方式安装 mysql 1、检查当前操作系统是否安装过mysql ，如果安装进行卸载操作 2、下载与安装mysql 要求在线下载安装，所以必须保证你的虚拟机的Linux系统能正常的访问外网( 上网) 注：如何系统中没安装wget软件, 先安装: 使用 wget 命令下载mysql的repo源： https://downloads.mysql.co...</summary>
+    <category term="database" scheme=""/>
+    <published>2020-05-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ArrayList集合</title>
+    <id>https://topjf.github.io/java/basis/arraylist.html</id>
+    <link href="https://topjf.github.io/java/basis/arraylist.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">ArrayList集合 示例 1 : 使用数组的局限性 示例 2 : ArrayList存放对象 示例1:使用数组的局限性 如果要存放多个对象，可以使用数组，但是数组有局限性 比如 声明长度是10的数组 不用的数组就浪费了 超过10的个数，又放不下 引入arraylist的泛型使用方式，解决代码不好看问题 ```java //import java.u...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-08T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">面向对象基础</title>
+    <id>https://topjf.github.io/java/basis/basic-grammar.html</id>
+    <link href="https://topjf.github.io/java/basis/basic-grammar.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">面向对象基础 核心：一切行为，让对象自己做自己的事情，其他人不能手动操作 前提案例： img 案例演示： 需求：创建一个女神泪 img 女神泪装备类： 名称 价格 效果 Left-装备 Right-装备 被动功能：f(){} 主动功能 默认功能：合成其他装备 结构图： img 案例代码： 1、类和对象 类：class 对象模型，模板 对象：new出来的...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-07T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">数据结构</title>
+    <id>https://topjf.github.io/java/basis/data-structure.html</id>
+    <link href="https://topjf.github.io/java/basis/data-structure.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">img 数组基础 img 给数组取一个名字Array ——arr 真实环境中更需要给数组取一个有实际意义的名字 数据的索引 索引概念很重要，可以有语义也可以没有语义 img 对于索引的理解 1， 数组的最大优点：快速查询——scores【2】 2， 数组最好应用于“索引有语意”的情况 3， 但并非所有有语意的索引都适用于数组 身份证号：50010520...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-10T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">异常</title>
+    <id>https://topjf.github.io/java/basis/exception.html</id>
+    <link href="https://topjf.github.io/java/basis/exception.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">异常定义 异常处理常见手段： try catch finally throws throw 步骤 1 : try catch 1、将可能抛出ArrayIndexOutOfBoundsException数组角标越界异常的代码放在try里 2、如果角标存在，就会顺序往下执行，并且不执行catch块中的代码 3、如果角标不存在，try 里的代码会立即终止，程...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">IO文件流</title>
+    <id>https://topjf.github.io/java/basis/io-note.html</id>
+    <link href="https://topjf.github.io/java/basis/io-note.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">分类 1、字节类， 2、字符类 java输入/输出流体系中常用的流的分类表 分类 字节输入流 字节输出流 字符输入流 字符输出流 抽象基类 InputStream OutputStream Reader Writer 访问文件 FileInputStream FileOutputStream FileReader FileWriter 访问数组 ByteArrayInputStream ByteArrayOutputStream CharArrayReader CharArrayWriter 访问管道 PipedInputStream PipedOutputStream PipedReader PipedWriter 访问字符串 StringReader StringWriter 缓冲流 BufferedInputStream BufferedOutputStream BufferedReader BufferedWriter 转换流 InputStreamReader OutputStreamWriter 对象流 ObjectInputStream ObjectOutputStream 抽象基类 FilterInputStream FilterOutputStream FilterReader FilterWriter 打印流 PrintStream PrintWriter 推回输入流 PushbackInputStream PushbackReader 特殊流 DataInputStream DataOutputStream</summary>
+    <content type="html"><![CDATA[<p></p>
+<h2> 分类</h2>
+<p>1、字节类，</p>
+<p></p>
+<p>2、字符类</p>
+<p></p>
+<p>java输入/输出流体系中常用的流的分类表</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">分类</th>
+<th>字节输入流</th>
+<th>字节输出流</th>
+<th>字符输入流</th>
+<th>字符输出流</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">抽象基类</td>
+<td>InputStream</td>
+<td>OutputStream</td>
+<td>Reader</td>
+<td>Writer</td>
+</tr>
+<tr>
+<td style="text-align:center">访问文件</td>
+<td><strong>FileInputStream</strong></td>
+<td><strong>FileOutputStream</strong></td>
+<td><strong>FileReader</strong></td>
+<td><strong>FileWriter</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">访问数组</td>
+<td><strong>ByteArrayInputStream</strong></td>
+<td><strong>ByteArrayOutputStream</strong></td>
+<td><strong>CharArrayReader</strong></td>
+<td><strong>CharArrayWriter</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">访问管道</td>
+<td><strong>PipedInputStream</strong></td>
+<td><strong>PipedOutputStream</strong></td>
+<td><strong>PipedReader</strong></td>
+<td><strong>PipedWriter</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">访问字符串</td>
+<td></td>
+<td></td>
+<td><strong>StringReader</strong></td>
+<td><strong>StringWriter</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">缓冲流</td>
+<td>BufferedInputStream</td>
+<td>BufferedOutputStream</td>
+<td>BufferedReader</td>
+<td>BufferedWriter</td>
+</tr>
+<tr>
+<td style="text-align:center">转换流</td>
+<td></td>
+<td></td>
+<td>InputStreamReader</td>
+<td>OutputStreamWriter</td>
+</tr>
+<tr>
+<td style="text-align:center">对象流</td>
+<td>ObjectInputStream</td>
+<td>ObjectOutputStream</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">抽象基类</td>
+<td>FilterInputStream</td>
+<td>FilterOutputStream</td>
+<td>FilterReader</td>
+<td>FilterWriter</td>
+</tr>
+<tr>
+<td style="text-align:center">打印流</td>
+<td></td>
+<td>PrintStream</td>
+<td></td>
+<td>PrintWriter</td>
+</tr>
+<tr>
+<td style="text-align:center">推回输入流</td>
+<td>PushbackInputStream</td>
+<td></td>
+<td>PushbackReader</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">特殊流</td>
+<td>DataInputStream</td>
+<td>DataOutputStream</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1>Io流</h1>
+<h2> 什么是流</h2>
+<p>当不同的介质之间有数据交互的时候，JAVA就使用流来实现。
+数据源可以是文件，还可以是数据库，网络甚至是其他的程序</p>
+<p>比如读取文件的数据到程序中，站在程序的角度来看，就叫做输入流
+输入流： InputStream
+输出流：OutputStream</p>
+<p></p>
+<h2> 文件输入流</h2>
+<p>如下代码，就建立了一个文件输入流，这个流可以用来把数据从硬盘的文件，读取到JVM(内存)</p>
+<p>目前代码只是建立了流，还没有开始读取</p>
+<h2> 文件输出流</h2>
+<p>参考文件输入流的建立，建立一个文件输出流</p>
+<p></p>
+<h2> Ascll码概念</h2>
+<p>所有的数据存放在计算机中都是以数字的形式存放的。 所以<strong>字母就需要转换为数字才能够存放</strong>
+比如A就对应的数字65，a对应的数字97. 不同的字母和符号对应不同的数字，就是一张码表。
+ASCII是这样的一种码表。 只<strong>包含简单的英文字母</strong>，符号，数字等等。 <strong>不包含中文，德文，俄语等复杂</strong>的。</p>
+<p>示例中列出了可见的ASCII码以及对应的十进制和十六进制数字，不可见的暂未列出</p>
+<h2> 以字节流的形式读取文件</h2>
+<p>InputStream是字节输入流，同时也是抽象类，只提供方法声明，不提供方法的具体实现。
+FileInputStream 是InputStream子类，以FileInputStream 为例进行文件读取</p>
+<h2> 以字节流的形式向文件写数据</h2>
+<p>OutputStream是字节输出流，同时也是抽象类，只提供方法声明，不提供方法的具体实现。
+FileOutputStream 是OutputStream子类，以FileOutputStream 为例向文件写出数据</p>
+<p>注: 如果文件d:/lol2.txt不存在，写出操作会自动创建该文件。
+但是如果是文件 d:/xyz/lol2.txt，而目录xyz又不存在，会抛出异常</p>
+<h1>字符流</h1>
+<p>Reader字符输入流
+Writer字符输出流
+专门用于字符的形式读取和写入数据</p>
+<h2> 字符流读取文件</h2>
+<p>FileReader 是Reader子类，以FileReader 为例进行文件读取</p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//准备文件lol.txt其中的内容是AB</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"d:/lol.txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">//创建基于文件的Reader</span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">FileReader</span> fr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileReader</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">//创建字符数组，其长度就是文件的长度</span>
+        <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">]</span> all <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span> f<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token comment">//以字符流的形式读取文件所有内容</span>
+        fr<span class="token punctuation">.</span><span class="token function">read</span><span class="token punctuation">(</span>all<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">char</span> b <span class="token operator">:</span> all<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">//打印出来是A B</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h2> 字符流写入到文件</h2>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">demo2</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 准备文件lol2.txt</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"d:/lol2.txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 创建基于文件的Writer</span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">FileWriter</span> fr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileWriter</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 以字符流的形式把数据写入到文件中</span>
+        <span class="token class-name">String</span> data <span class="token operator">=</span> <span class="token string">"abcdefg1234567890"</span><span class="token punctuation">;</span>
+        <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cs <span class="token operator">=</span> data<span class="token punctuation">.</span><span class="token function">toCharArray</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        fr<span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span>cs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h1>转换流</h1>
+<h1>缓冲流</h1>
+<p>以介质是硬盘为例，<strong>字节流和字符流的弊端</strong>：
+在每一次读写的时候，都会访问硬盘。 如果读写的频率比较高的时候，其性能表现不佳。</p>
+<p>为了解决以上弊端，采用缓存流。
+缓存流在读取的时候，<strong>会一次性读较多的数据到缓存中</strong>，以后每一次的读取，都是在缓存中访问，直到缓存中的数据读取完毕，再到硬盘中读取。</p>
+<p>就好比吃饭，<strong>不用缓存就是每吃一口都到锅里去铲</strong>。<strong>用缓存就是先把饭盛到碗里</strong>，碗里的吃完了，再到锅里去铲</p>
+<p>缓存流在写入数据的时候，会先把数据写入到缓存区，直到缓存区<strong>达到一定的量</strong>，才把这些数据，<strong>一起写入到硬盘中去</strong>。按照这种操作模式，就不会像字节流，字符流那样<strong>每写一个字节都访问硬盘</strong>，从而减少了IO操作</p>
+<h2> 使用缓存流读取数据</h2>
+<h3> 使用缓存流写数据</h3>
+<h1>public class PrintWriter</h1>
+<p>·     extends [Writer](mk:@MSITStore:C:\Users\Administrator\Desktop\Java Platform SE 8.chm::/java/io/Writer.html)</p>
+<p>Prints formatted representations of objects to a text-output stream. This class implements all of the print methods found in [PrintStream](mk:@MSITStore:C:\Users\Administrator\Desktop\Java Platform SE 8.chm::/java/io/PrintStream.html). It does not contain methods for writing raw bytes, for which a program should use unencoded byte streams.</p>
+<p>Unlike the [PrintStream](mk:@MSITStore:C:\Users\Administrator\Desktop\Java Platform SE 8.chm::/java/io/PrintStream.html) class, if automatic flushing is enabled it will be done only when one of the println, printf, or format methods is invoked, rather than whenever a newline character happens to be output. These methods use the platform's own notion of line separator rather than the newline character.</p>
+<p>Methods in this class never throw I/O exceptions, although some of its constructors may. The client may inquire as to whether any errors have occurred by invoking [checkError()](mk:@MSITStore:C:\Users\Administrator\Desktop\Java Platform SE 8.chm::/java/io/PrintWriter.html#checkError--).</p>
+<p>可以使用除开byte相关的print方法，实践案例是生成模板</p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">demo3</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">File</span> source <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"src\\com\\classtemplate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> className <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> filedType <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> filedName <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> methodName <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>      <span class="token comment">//接收控制台的输入</span>
+        <span class="token class-name">BufferedReader</span> systemin <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">BufferedReader</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">InputStreamReader</span><span class="token punctuation">(</span><span class="token class-name">System</span><span class="token punctuation">.</span>in<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"请输入类名："</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            className <span class="token operator">=</span> systemin<span class="token punctuation">.</span><span class="token function">readLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"请输入成员类型："</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            filedType <span class="token operator">=</span> systemin<span class="token punctuation">.</span><span class="token function">readLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"请输入成员名称："</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            filedName <span class="token operator">=</span> systemin<span class="token punctuation">.</span><span class="token function">readLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"请输入方法名称："</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            methodName <span class="token operator">=</span> systemin<span class="token punctuation">.</span><span class="token function">readLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            systemin<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">BufferedReader</span> br <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">BufferedReader</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileReader</span><span class="token punctuation">(</span>source<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">//String</span>
+            filedName <span class="token operator">=</span> className<span class="token punctuation">.</span><span class="token function">toUpperCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">+</span> className<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> className<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">String</span> fileName <span class="token operator">=</span> className<span class="token punctuation">;</span>    <span class="token comment">//需要让printwriter具备缓冲功能--调高解析性能</span>
+            <span class="token class-name">PrintWriter</span> pw <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">PrintWriter</span><span class="token punctuation">(</span><span class="token comment">//pw有很多打印方法</span>
+                    <span class="token keyword">new</span> <span class="token class-name">BufferedWriter</span><span class="token punctuation">(</span><span class="token comment">//pw里面实现了缓冲功能，提高了解析效率</span>
+                            <span class="token keyword">new</span> <span class="token class-name">FileWriter</span><span class="token punctuation">(</span><span class="token string">"src\\com\\"</span> <span class="token operator">+</span> fileName <span class="token operator">+</span> <span class="token string">".java"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//真正实现输出文本的功能由filewriter实现</span>
+            <span class="token comment">// 2， br。readline--&gt;pw.print()</span>
+            <span class="token class-name">String</span> line <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+            <span class="token class-name">String</span> temp <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+            <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>line <span class="token operator">=</span> br<span class="token punctuation">.</span><span class="token function">readLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token comment">//         print--format（@xxx）</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span><span class="token string">"@ClassName"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    temp <span class="token operator">+=</span> line<span class="token punctuation">.</span><span class="token function">replaceAll</span><span class="token punctuation">(</span><span class="token string">"@ClassName"</span><span class="token punctuation">,</span> className<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token comment">//打印并换行 这里自动地flush一下，flush：把瓢瓢里面的数据取出来，写入目标中</span>
+                    pw<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>temp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span><span class="token string">"@Filed"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token comment">//         @FiledArea  @FiledType @FiledName</span>
+                    temp <span class="token operator">+=</span> line<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@FiledArea"</span><span class="token punctuation">,</span> <span class="token string">"private"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@FiledType"</span><span class="token punctuation">,</span> filedType<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@FiledName"</span><span class="token punctuation">,</span> filedName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    pw<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>temp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span><span class="token string">"@package"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    temp <span class="token operator">+=</span> line<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@package"</span><span class="token punctuation">,</span> <span class="token string">"com"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    pw<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>temp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span><span class="token string">"@Method"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token comment">//                @MethodArea @MethodType @MethodName(@MethodParamType@MethodParamName)</span>
+                    temp <span class="token operator">+=</span> line<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@MethodArea"</span><span class="token punctuation">,</span> <span class="token string">"public"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@MethodType"</span><span class="token punctuation">,</span> <span class="token string">"void"</span><span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@MethodName"</span><span class="token punctuation">,</span> methodName<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@MethodParamType"</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"@MethodParamName"</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    pw<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>temp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                    temp <span class="token operator">+=</span> line<span class="token punctuation">;</span>
+                    pw<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>temp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                temp <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token comment">//3，br pw  close</span>
+            pw<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            br<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h1>编码问题</h1>
+<p>步骤 1 : 编码概念</p>
+<p>步骤 2 : 常见编码</p>
+<p>步骤 3 : UNICODE和UTF</p>
+<p>步骤 4 : Java采用的是Unicode</p>
+<p>步骤 5 : 一个汉字使用不同编码方式的表现</p>
+<p>步骤 6 : 文件的编码方式-记事本</p>
+<p>步骤 7 : 文件的编码方式-eclipse</p>
+<p>步骤 8 : 用FileInputStream 字节流正确读取中文</p>
+<p>步骤 9 : 用FileReader 字符流正确读取中文</p>
+<p></p>
+<p>总结：保证文件的编码（存储的时候存储的文件编码格式）与编码化的文字，与取出来的编码，与展现的编码，要保证一致</p>
+<p>最简单总结：凡是出现charset的地方，全部utf-8</p>
+<h2> 步骤 1 : 编码概念</h2>
+<p>计算机存放数据只能存放数字，所有的字符都会被转换为不同的数字。
+就像一个棋盘一样，不同的字，处于不同的位置，而不同的位置，有不同的数字编号。
+有的棋盘很小，只能放数字和英文
+有的大一点，还能放中文
+有的“足够”大，能够放下世界人民所使用的所有文字和符号</p>
+<p>如图所示，英文字符 <strong>A</strong> 能够放在所有的棋盘里，而且位置都差不多
+中文字符, 中文字符 <strong>中</strong> 能够放在后两种棋盘里，并且位置不一样，而且在小的那个棋盘里，就放不下中文</p>
+<p></p>
+<h2> 步骤 2 : 常见编码</h2>
+<p>工作后经常接触的编码方式有如下几种：
+<strong>ISO-8859-1 ASCII</strong> 数字和西欧字母
+<strong>GBK GB2312 BIG5</strong> 中文
+<strong>UNICODE</strong> (统一码，万国码)</p>
+<p>其中
+ISO-8859-1 包含 ASCII
+GB2312 是简体中文，BIG5是繁体中文，GBK同时包含简体和繁体以及日文。
+UNICODE 包括了所有的文字，无论中文，英文，藏文，法文，世界所有的文字都包含其中</p>
+<h2> 步骤 3 : UNICODE和UTF</h2>
+<p>不同的编码方式对应不同的<strong>棋盘</strong>，而UNICODE因为要存放所有的数据，那么它的棋盘是最大的。
+不仅如此，棋盘里每个数字都是很长的(4个字节)，因为不仅要表示字母，还要表示汉字等。</p>
+<p>如果完全按照UNICODE的方式来存储数据，就会有很大的浪费。
+比如在ISO-8859-1中，<strong>a</strong> 字符对应的数字是0x61
+而UNICODE中对应的数字是 0x00000061，倘若一篇文章大部分都是英文字母，那么按照UNICODE的方式进行数据保存就会消耗很多空间</p>
+<p>在这种情况下，就出现了UNICODE的各种<strong>减肥</strong>子编码, 比如UTF-8对数字和字母就使用一个字节，而对汉字就使用3个字节，从而达到了<strong>减肥还能保证健康</strong>的效果</p>
+<p>UTF-8，UTF-16和UTF-32 针对不同类型的数据有不同的<strong>减肥效果</strong>，一般说来UTF-8是比较常用的方式</p>
+<p>UTF-8，UTF-16和UTF-32 彼此的区别在此不作赘述，有兴趣的可以参考unicode码</p>
+<p>Unicode（统一码、万国码、单一码）是计算机科学领域里的一项业界标准，包括字符集、编码方案等。Unicode 是为了解决传统的字符编码方案的局限而产生的，它为每种语言中的每个字符设定了统一并且唯一的二进制编码，以满足跨语言、跨平台进行文本转换、处理的要求。1990年开始研发，1994年正式公布</p>
+<p></p>
+<h2> 步骤 4 : Java采用的是Unicode</h2>
+<p>写在.java源代码中的汉字，在执行之后，都会变成JVM中的字符。
+而这些中文字符采用的编码方式，都是使用UNICODE. "中"字对应的UNICODE是<strong>4E2D</strong>,所以在内存中，实际保存的数据就是十六进制的0x4E2D, 也就是十进制的20013</p>
+<h2> 步骤 5 : 一个汉字使用不同编码方式的表现</h2>
+<h2> 以字符 中 为例，查看其在不同编码方式下的值是多少  也即在不同的棋盘上的位置</h2>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">String</span> str <span class="token operator">=</span> <span class="token string">"中"</span><span class="token punctuation">;</span>
+    <span class="token function">showCode</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">showCode</span><span class="token punctuation">(</span><span class="token class-name">String</span> str<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> encodes <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"BIG5"</span><span class="token punctuation">,</span> <span class="token string">"GBK"</span><span class="token punctuation">,</span> <span class="token string">"GB2312"</span><span class="token punctuation">,</span> <span class="token string">"UTF-8"</span><span class="token punctuation">,</span> <span class="token string">"UTF-16"</span><span class="token punctuation">,</span> <span class="token string">"UTF-32"</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">String</span> encode <span class="token operator">:</span> encodes<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">showCode</span><span class="token punctuation">(</span>str<span class="token punctuation">,</span> encode<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">showCode</span><span class="token punctuation">(</span><span class="token class-name">String</span> str<span class="token punctuation">,</span> <span class="token class-name">String</span> encode<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"字符: \"%s\" 的在编码方式%s下的十六进制值是%n"</span><span class="token punctuation">,</span> str<span class="token punctuation">,</span> encode<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> bs <span class="token operator">=</span> str<span class="token punctuation">.</span><span class="token function">getBytes</span><span class="token punctuation">(</span>encode<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">byte</span> b <span class="token operator">:</span> bs<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">int</span> i <span class="token operator">=</span> b <span class="token operator">&amp;</span> <span class="token number">0xff</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">print</span><span class="token punctuation">(</span><span class="token class-name">Integer</span><span class="token punctuation">.</span><span class="token function">toHexString</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"\t"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">UnsupportedEncodingException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"UnsupportedEncodingException:  %s编码方式无法解析字符%s\n"</span><span class="token punctuation">,</span> encode<span class="token punctuation">,</span> str<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h2> 步骤 6 : 文件的编码方式-记事本</h2>
+<p>接下来讲，字符在文件中的保存
+字符保存在文件中肯定也是以数字形式保存的，即对应在不同的<strong>棋盘</strong>上的不同的数字
+用<strong>记事本</strong>打开任意文本文件，并且<strong>另存为</strong>，就能够在编码这里看到一个下拉。
+<strong>ANSI</strong> 这个不是ASCII的意思，而是采用本地编码的意思。如果你是中文的操作系统，就会使GBK，如果是英文的就会是ISO-8859-1
+**Unicode UNICODE原生的编码方式
+<strong>Unicode big endian</strong> 另一个 UNICODE编码方式
+<strong>UTF-8</strong> 最常见的UTF-8编码方式，数字和字母用一个字节， 汉字用3个字节</p>
+<p></p>
+<h2> 步骤 7 : 文件的编码方式-eclipse</h2>
+<p>eclipse也有类似的编码方式，右键任意文本文件，点击最下面的"property"
+就可以看到<strong>Text file encoding</strong>
+也有ISO-8859-1，GBK,UTF-8等等选项。
+其他的US-ASCII,UTF-16，UTF-16BE,UTF-16LE不常用</p>
+<p></p>
+<h2> 步骤 8 : 用FileInputStream 字节流正确读取中文</h2>
+<p>为了能够正确的读取中文内容
+\1. 必须了解文本是以哪种编码方式保存字符的
+\2. 使用字节流读取了文本后，再使用对应的<strong>编码方式去识别这些数字</strong>，得到正确的字符
+如本例，一个文件中的内容是字符<strong>中</strong>，编码方式是GBK，那么读出来的数据一定是D6D0。
+再使用GBK编码方式识别D6D0，就能正确的得到字符<strong>中</strong></p>
+<p><strong>注：</strong> 在GBK的棋盘上找到的<strong>中</strong>字后，JVM会自动找到<strong>中</strong>在UNICODE这个棋盘上对应的数字</p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"E:\\project\\j2se\\src\\test.txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">FileInputStream</span> fis <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> all <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span> f<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        fis<span class="token punctuation">.</span><span class="token function">read</span><span class="token punctuation">(</span>all<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"文件中读出来的数据是："</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">byte</span> b <span class="token operator">:</span> all<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">//只取16进制的后两位</span>
+            <span class="token keyword">int</span> i <span class="token operator">=</span> b <span class="token operator">&amp;</span> <span class="token number">0x000000ff</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">Integer</span><span class="token punctuation">.</span><span class="token function">toHexString</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"把这个数字，放在GBK的棋盘上去："</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> str <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">(</span>all<span class="token punctuation">,</span> <span class="token string">"GBK"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span> 
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h2> 步骤 9 : 用FileReader 字符流正确读取中文</h2>
+<p>FileReader得到的是字符，所以一定是已经把字节<strong>根据某种编码识别成了字符</strong>了
+而FileReader使用的编码方式是Charset.defaultCharset()的返回值，如果是中文的操作系统，就是GBK
+FileReader是不能手动设置编码方式的，为了使用其他的编码方式，只能使用InputStreamReader来代替，像这样：</p>
+<p>new InputStreamReader(new FileInputStream(f),Charset.forName("UTF-8"));</p>
+<p>在本例中，用记事本另存为UTF-8格式，然后用UTF-8就能识别对应的中文了。</p>
+<p><strong>解释：</strong> 为什么中字前面有一个?
+如果是使用记事本另存为UTF-8的格式，那么在第一个字节有一个<strong>标示符</strong>，叫做BOM用来标志这个文件是用UTF-8来编码的</p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">demo5</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"E:\\project\\j2se\\src\\test.txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"默认编码方式:"</span> <span class="token operator">+</span> <span class="token class-name">Charset</span><span class="token punctuation">.</span><span class="token function">defaultCharset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">//FileReader得到的是字符，所以一定是已经把字节根据某种编码识别成了字符了      </span>
+    <span class="token comment">// 而FileReader使用的编码方式是Charset.defaultCharset()的返回值，如果是中文的操作系统，就是GBK  </span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">FileReader</span> fr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileReader</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span> f<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        fr<span class="token punctuation">.</span><span class="token function">read</span><span class="token punctuation">(</span>cs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"FileReader会使用默认的编码方式%s,识别出来的字符是：%n"</span><span class="token punctuation">,</span> <span class="token class-name">Charset</span><span class="token punctuation">.</span><span class="token function">defaultCharset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">(</span>cs<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">// FileReader是不能手动设置编码方式的，为了使用其他的编码方式，只能使用InputStreamReader来代替      </span>
+    <span class="token comment">// 并且使用new  InputStreamReader(new FileInputStream(f),Charset.forName("UTF-8"));  这样的形式    </span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">InputStreamReader</span> isr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">InputStreamReader</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token class-name">Charset</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"UTF-8"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token keyword">char</span><span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span> f<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        isr<span class="token punctuation">.</span><span class="token function">read</span><span class="token punctuation">(</span>cs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"InputStreamReader  指定编码方式UTF-8,识别出来的字符是：%n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">(</span>cs<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h1>数据流</h1>
+<p>DataInputStream 数据输入流
+DataOutputStream 数据输出流</p>
+<h2> 直接进行字符串的读写</h2>
+<p>使用数据流的writeUTF()和readUTF() 可以进行数据的<strong>格式化顺序读写</strong>
+如本例，通过DataOutputStream 向文件顺序写出 布尔值，整数和字符串。 然后再通过DataInputStream 顺序读入这些数据。</p>
+<p><strong>注：</strong> 要用DataInputStream 读取一个文件，这个文件必须是由DataOutputStream 写出的，否则会出现EOFException，因为DataOutputStream 在写出的时候会做一些特殊标记，只有DataInputStream 才能成功的读取</p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"d:/lol.txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">FileInputStream</span> fis <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token class-name">DataInputStream</span> dis <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DataInputStream</span><span class="token punctuation">(</span>fis<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">boolean</span> b <span class="token operator">=</span> dis<span class="token punctuation">.</span><span class="token function">readBoolean</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> i <span class="token operator">=</span> dis<span class="token punctuation">.</span><span class="token function">readInt</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> str <span class="token operator">=</span> dis<span class="token punctuation">.</span><span class="token function">readUTF</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"读取到布尔值:"</span> <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"读取到整数:"</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"读取到字符串:"</span> <span class="token operator">+</span> str<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">write</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"d:/lol.txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">FileOutputStream</span> fos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileOutputStream</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token class-name">DataOutputStream</span> dos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DataOutputStream</span><span class="token punctuation">(</span>fos<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        dos<span class="token punctuation">.</span><span class="token function">writeBoolean</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        dos<span class="token punctuation">.</span><span class="token function">writeInt</span><span class="token punctuation">(</span><span class="token number">300</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        dos<span class="token punctuation">.</span><span class="token function">writeUTF</span><span class="token punctuation">(</span><span class="token string">"123  this is gareen"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h1>对象流</h1>
+<p>对象流指的是可以直接<strong>把一个对象以流的形式</strong>传输给其他的介质，比如硬盘</p>
+<p>一个对象以流的形式进行传输，叫做序列化。 该对象所对应的类，必须是实现Serializable接口</p>
+<h2> 序列化一个对象</h2>
+<p>创建一个Hero对象，设置其名称为garen。
+把该对象序列化到一个文件garen.lol。
+然后再通过序列化把该文件转换为一个Hero对象</p>
+<p>**注：**把一个对象序列化有一个前提是：这个对象的类，必须实现了Serializable接口</p>
+<div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">demo6</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//创建一个Hero garen</span>
+    <span class="token comment">// 要把Hero对象直接保存在文件上，务必让Hero类实现Serializable接口</span>
+    <span class="token class-name">Hero</span> h <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Hero</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    h<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">"garen"</span><span class="token punctuation">;</span>
+    h<span class="token punctuation">.</span>hp <span class="token operator">=</span> <span class="token number">616</span><span class="token punctuation">;</span>
+    <span class="token comment">// 准备一个文件用于保存该对象</span>
+    <span class="token class-name">File</span> f <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"d:/garen.lol"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">(</span>
+            <span class="token comment">// 创建对象输出流</span>
+            <span class="token class-name">FileOutputStream</span> fos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileOutputStream</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">ObjectOutputStream</span> oos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectOutputStream</span><span class="token punctuation">(</span>fos<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment">// 创建对象输入流</span>
+            <span class="token class-name">FileInputStream</span> fis <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">ObjectInputStream</span> ois <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectInputStream</span><span class="token punctuation">(</span>fis<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        oos<span class="token punctuation">.</span><span class="token function">writeObject</span><span class="token punctuation">(</span>h<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Hero</span> h2 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Hero</span><span class="token punctuation">)</span> ois<span class="token punctuation">.</span><span class="token function">readObject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>h2<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>h2<span class="token punctuation">.</span>hp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> <span class="token operator">|</span> <span class="token class-name">ClassNotFoundException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token keyword">class</span> <span class="token class-name">Hero</span> <span class="token keyword">implements</span> <span class="token class-name">Serializable</span><span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">long</span> serialVersionUID <span class="token operator">=</span> <span class="token number">1L</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> name<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">int</span> hp<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div>]]></content>
+    <category term="Java" scheme=""/>
+    <published>2019-08-12T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">数据库设计需要注意什么</title>
+    <id>https://topjf.github.io/java/basis/mysql-setting.html</id>
+    <link href="https://topjf.github.io/java/basis/mysql-setting.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">数据库设计需要注意什么？ 一、 基础规范 1、必须使用InnoDB存储引擎 支持事务、行级锁、并发性能更好、CPU及内存缓存页优化使得资源利用率更高 2、新库默认使用utf8mb4字符集 utf8mb4是utf8的超集，emoji表情以及部分不常见汉字在utf8下会表现为乱码。 3、数据表、数据字段必须加中文注释 添加注释能以后更好的知道是干什么用的 ...</summary>
+    <category term="database" scheme=""/>
+    <published>2019-08-13T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">OOP核心</title>
+    <id>https://topjf.github.io/java/basis/oop.html</id>
+    <link href="https://topjf.github.io/java/basis/oop.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">写代码的终极思路： 1，场景化需求分析 2，准确逻辑化需求分析 3，寻找解决模型——设计模式 4，编写调试，重复1-4 5，功能测试和性能测试 代码学习方法 1， 整体认知：要知道效果 2， 跟着源代码敲一遍，解决报错问题（百度定性，定范围|帮助文档查查查） 3， 一行一行地分析代码，在看代码的同时，需要理解里面出现的所有你现在还不能理解的东西，理解过...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-14T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">字符串练习</title>
+    <id>https://topjf.github.io/java/basis/string.html</id>
+    <link href="https://topjf.github.io/java/basis/string.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">装箱拆箱 封装类 所有的基本类型，都有对应的类类型 比如int对应的类是Integer 这种类就叫做封装类 Number类 数字封装类有 Byte,Short,Integer,Long,Float,Double 这些类都是抽象类Number的子类 image-20220530173355071 基本类型转封装类 封装类转基本类型 自动装箱 不需要调用构...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-15T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">servlet基础</title>
+    <id>https://topjf.github.io/java/basis/web-servlet-jsp.html</id>
+    <link href="https://topjf.github.io/java/basis/web-servlet-jsp.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">配置tomcat到eclipse中 a) image-20220530164639880 b) image-20220530164647164 c) image-20220530164721723 d) image-20220530164727203 e) image-20220530164732285 f) image-202205301647360...</summary>
+    <category term="Java" scheme=""/>
+    <published>2019-08-15T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java 10 新特性概览</title>
+    <id>https://topjf.github.io/java/new-features/java10.html</id>
+    <link href="https://topjf.github.io/java/new-features/java10.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">Java 10 发布于 2018 年 3 月 20 日，最知名的特性应该是 var 关键字（局部变量类型推断）的引入了，其他还有垃圾收集器改善、GC 改进、性能提升、线程管控等一批新特性。 概览（精选了一部分） ： JEP 286：局部变量类型推断 (https://openjdk.java.net/jeps/286); JEP 304：垃圾回收器接口...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java 11 新特性概览</title>
+    <id>https://topjf.github.io/java/new-features/java11.html</id>
+    <link href="https://topjf.github.io/java/new-features/java11.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">Java 11 于 2018 年 9 月 25 日正式发布，这是很重要的一个版本！Java 11 和 2017 年 9 月份发布的 Java 9 以及 2018 年 3 月份发布的 Java 10 相比，其最大的区别就是：在长期支持(Long-Term-Support)方面，Oracle 表示会对 Java 11 提供大力支持，这一支持将会持续至 20...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java 12 ~ 13 新特性概览</title>
+    <id>https://topjf.github.io/java/new-features/java12-13.html</id>
+    <link href="https://topjf.github.io/java/new-features/java12-13.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">Java12 String 增强 Java 11 增加了两个的字符串处理方法，如以下所示。 indent() 方法可以实现字符串缩进。 输出： transform() 方法可以用来转变指定字符串。 Files 增强（文件比较） Java 12 添加了以下方法来比较两个文件： mismatch() 方法用于比较两个文件，并返回第一个不匹配字符的位置，如果...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java 14 ~ 15 新特性概览</title>
+    <id>https://topjf.github.io/java/new-features/java14-15.html</id>
+    <link href="https://topjf.github.io/java/new-features/java14-15.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">Java14 空指针异常精准提示 通过 JVM 参数中添加-XX:+ShowCodeDetailsInExceptionMessages，可以在空指针异常中获取更为详细的调用信息，更快的定位和解决问题。 Java 14 之前： Java 14 之后： switch 的增强(转正) Java12 引入的 switch（预览特性）在 Java14 变为正式...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java 16 新特性概览</title>
+    <id>https://topjf.github.io/java/new-features/java16.html</id>
+    <link href="https://topjf.github.io/java/new-features/java16.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">Java 16 记录类型（转正） 变更历史： JDK 版本 更新类型 JEP 更新内容 ---------- ----------------- -------------------------------------------- -----------------------------------------------------------...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java8 新特性实战</title>
+    <id>https://topjf.github.io/java/new-features/java8-common-new-features.html</id>
+    <link href="https://topjf.github.io/java/new-features/java8-common-new-features.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">本文来自cowbi (https://github.com/cowbi)的投稿~ Oracle 于 2014 发布了 Java8（jdk1.8），诸多原因使它成为目前市场上使用最多的 jdk 版本。虽然发布距今已将近 7 年，但很多程序员对其新特性还是不够了解，尤其是用惯了 Java8 之前版本的老程序员，比如我。 为了不脱离队伍太远，还是有必要对这些...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java8 指南中文翻译</title>
+    <id>https://topjf.github.io/java/new-features/java8-tutorial-translate.html</id>
+    <link href="https://topjf.github.io/java/new-features/java8-tutorial-translate.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">随着 Java 8 的普及度越来越高，很多人都提到面试中关于Java 8 也是非常常问的知识点。应各位要求和需要，我打算对这部分知识做一个总结。本来准备自己总结的，后面看到Github 上有一个相关的仓库，地址： https://github.com/winterbe/java8-tutorial (https://github.com/winterb...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">Java 9 新特性概览</title>
+    <id>https://topjf.github.io/java/new-features/java9.html</id>
+    <link href="https://topjf.github.io/java/new-features/java9.html"/>
+    <updated>2022-12-24T03:26:15.000Z</updated>
+    <summary type="html">Java 9 发布于 2017 年 9 月 21 日 。作为 Java 8 之后 3 年半才发布的新版本，Java 9 带来了很多重大的变化其中最重要的改动是 Java 平台模块系统的引入，其他还有诸如集合、Stream 流......。 你可以在 Archived OpenJDK General-Availability Releases (http...</summary>
+    <category term="Java" scheme=""/>
+    <published>2022-12-16T06:02:03.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ansible安装与基础概念</title>
+    <id>https://topjf.github.io/linux/ansible/ansible-basis.html</id>
+    <link href="https://topjf.github.io/linux/ansible/ansible-basis.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">ansible 中文指南 (http://ansible.com.cn/docs/intro.html) 本节示例文件 提取码：1234 (https://pan.baidu.com/s/1fkosURl4HaYZALtSjKvcKg) 虚拟机主机分配 8+2+200G 控制端-admin：192.168.0.118 被控制端-n1：192.168.0...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-07-29T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ansible-doc模块功能查看工具</title>
+    <id>https://topjf.github.io/linux/ansible/ansible-doc.html</id>
+    <link href="https://topjf.github.io/linux/ansible/ansible-doc.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">ansible 中文指南 (http://ansible.com.cn/docs/intro.html) 本节示例文件 提取码：1234 (https://pan.baidu.com/s/1fkosURl4HaYZALtSjKvcKg) ansible-doc</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-07-29T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ansible安装docker</title>
+    <id>https://topjf.github.io/linux/ansible/ansible-docker.html</id>
+    <link href="https://topjf.github.io/linux/ansible/ansible-docker.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">设置主机清单 vim /etc/ansible/hosts ① 在roles目录下生成对应的目录结构 ② 定义 tasks 任务文件 vim /etc/ansible/roles/docker/tasks/main.yml install.yml start.yml stop.yml restart.yml status.yml reload.yml ...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-07-30T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ansible-galaxy</title>
+    <id>https://topjf.github.io/linux/ansible/ansible-galaxy.html</id>
+    <link href="https://topjf.github.io/linux/ansible/ansible-galaxy.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">ansible 中文指南 (http://ansible.com.cn/docs/intro.html) 本节示例文件 提取码：1234 (https://pan.baidu.com/s/1fkosURl4HaYZALtSjKvcKg) 语法 ansible-galaxy (https://galaxy.ansible.com/) ：是一个免费的用于查...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-07-29T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ansible安装jdk</title>
+    <id>https://topjf.github.io/linux/ansible/ansible-jdk.html</id>
+    <link href="https://topjf.github.io/linux/ansible/ansible-jdk.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">-</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-07-30T00:00:00.000Z</published>
+  </entry>
+  <entry>
+    <title type="html">ansible安装mysql</title>
+    <id>https://topjf.github.io/linux/ansible/ansible-mysql.html</id>
+    <link href="https://topjf.github.io/linux/ansible/ansible-mysql.html"/>
+    <updated>2022-12-16T06:02:03.000Z</updated>
+    <summary type="html">设置主机清单 vim /etc/ansible/hosts ① 在roles目录下生成对应的目录结构 ② 定义 tasks 任务文件 wget http://repo.mysql.com/mysql57-community-release-el7-10.noarch.rpm vim /etc/ansible/roles/mysql/tasks/main...</summary>
+    <category term="Linux" scheme=""/>
+    <published>2022-07-30T00:00:00.000Z</published>
+  </entry>
+</feed>

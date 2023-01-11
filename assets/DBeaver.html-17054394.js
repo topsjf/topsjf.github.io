@@ -1,0 +1,1 @@
+import{_ as e,V as t,W as a,a0 as r,X as o}from"./framework-ed4f969a.js";const c={},n=o("p",null,"DBeaver:开源数据库管理工具。",-1);function s(_,l){return t(),a("div",null,[r(" more "),n])}const d=e(c,[["render",s],["__file","DBeaver.html.vue"]]);export{d as default};

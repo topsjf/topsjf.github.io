@@ -1,0 +1,1 @@
+import{_ as t,V as s,W as c,X as e}from"./framework-ed4f969a.js";const _="/assets/true-up-795f5e9b0d875063717b1ee6a08f2ff1c01-77051085.png",o={},a=e("p",null,[e("img",{src:_,alt:""})],-1),n=[a];function r(l,f){return s(),c("div",null,n)}const d=t(o,[["render",r],["__file","timed-task.html.vue"]]);export{d as default};

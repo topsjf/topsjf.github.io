@@ -1,0 +1,8 @@
+import{_ as a,V as e,W as n,a0 as s,$ as i}from"./framework-ed4f969a.js";const t="/assets/true-image-20220119195308426-6e9bdc9f.png",d="/assets/true-image-20220119195510261-cb692506.png",r={},o=i(`<h2 id="idea插件" tabindex="-1"><a class="header-anchor" href="#idea插件" aria-hidden="true">#</a> idea插件：</h2><p>Alibaba Java、CamelCase、Chinese、codeGlance3、codota、GenerateAllSetter、gitee、Grep Console、mybatis-log、RestfulToolkit、Translation、vuejs、GsonFormatPlus、json parser</p><h2 id="idea设置-java类文件注释模板" tabindex="-1"><a class="header-anchor" href="#idea设置-java类文件注释模板" aria-hidden="true">#</a> idea设置 java类文件注释模板</h2><div class="language-java line-numbers-mode" data-ext="java"><pre class="language-java"><code><span class="token doc-comment comment">/**
+  * 
+  * <span class="token keyword">@author</span> jf
+  * <span class="token keyword">@jdk-version</span>: 17
+  * <span class="token keyword">@date</span>: $<span class="token punctuation">{</span>DATE<span class="token punctuation">}</span> $<span class="token punctuation">{</span>TIME<span class="token punctuation">}</span>
+  * /  
+
+</span></code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h2 id="同一个启动类-多环境-多port-运行" tabindex="-1"><a class="header-anchor" href="#同一个启动类-多环境-多port-运行" aria-hidden="true">#</a> 同一个启动类：多环境+多port 运行</h2><p><img src="`+t+'" alt="image-20220119195308426"></p><p><img src="'+d+'" alt="image-20220119195510261"></p>',7);function c(l,p){return e(),n("div",null,[s(" more "),o])}const u=a(r,[["render",c],["__file","idea.html.vue"]]);export{u as default};

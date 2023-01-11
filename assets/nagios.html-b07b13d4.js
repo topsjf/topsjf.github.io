@@ -1,0 +1,1 @@
+import{_ as e,V as o,W as t,a0 as a,X as s}from"./framework-ed4f969a.js";const n={},c=s("h1",null,"Nagios监控平台",-1);function r(_,l){return o(),t("div",null,[a(" more "),c])}const m=e(n,[["render",r],["__file","nagios.html.vue"]]);export{m as default};
